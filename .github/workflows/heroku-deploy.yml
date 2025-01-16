@@ -1,40 +1,35 @@
 name: Heroku Deployment
 
-on:
-  push:
-    branches:
-      - main
+    on:
+      push:
+        branches:
+          - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v3
 
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+          - name: Login to Heroku Container Registry
+            uses: heroku/setup-v2@v2
+            with:
+              heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+              heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          
+          - name: Build and push
+            uses: docker/build-push-action@v4
+            with:
+              context: .
+              file: ./Dockerfile
+              push: true
+              tags: registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run tests
-        run: pytest
-
-      - name: Login to Heroku
-        uses: heroku/heroku-deploy@v1
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-
-      - name: Deploy to Heroku
-        uses: heroku/heroku-deploy@v1
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          stack: container # Optional, if you are using a Docker image
+          - name: Release
+            uses: heroku/deploy-v2@v2
+            with: 
+              heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+              heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+              process_type: web
