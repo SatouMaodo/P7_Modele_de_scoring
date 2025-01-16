@@ -25,7 +25,7 @@ jobs:
         run: pytest
 
       - name: Login to Heroku
-        uses: heroku/heroku-deploy@v1
+        uses: heroku/heroku-deploy@v2
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
