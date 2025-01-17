@@ -55,7 +55,7 @@ jobs:
           heroku config:set MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}
 
       - name: Start ngrok tunnel
-        run: ./ngrok http 5313 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
+        run: ./ngrok http 5311 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
 
       - name: Deploy to Heroku
         run: git push heroku HEAD:main
