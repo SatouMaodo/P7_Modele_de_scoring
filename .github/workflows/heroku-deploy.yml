@@ -52,7 +52,7 @@ jobs:
           heroku config:set MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }} -a ${{ secrets.HEROKU_APP_NAME }}
 
       - name: Start ngrok tunnel
-        run: ./ngrok http 5311 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
+        run: ./ngrok http 5313 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
 
       - name: Run unit tests
         run: pytest Tests/ 
