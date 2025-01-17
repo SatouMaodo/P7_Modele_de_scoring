@@ -1,1 +1,1 @@
-web: mlflow ui --host 0.0.0.0 --port $PORTT
+web: sh setup.sh && streamlit run appli.py
