@@ -12,7 +12,7 @@ jobs:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
       NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
-      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}  # Ajoutez cette ligne
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -31,18 +31,19 @@ jobs:
         run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
       - name: Login to Heroku
-        run: heroku git:remote -a {{ secrets.HEROKU_APP_NAME }}
+        run: heroku login -i
+
+      - name: Set Heroku git remote
+        run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
 
       - name: Set Heroku config vars
         run: |
           heroku config:set HEROKU_OAUTH_ID=c1c300a9-4c8f-41ee-90c1-ae3b9de1acdf
           heroku config:set HEROKU_OAUTH_SECRET=d268549c-cb2d-4b2d-9521-fc33a139dd15
-          heroku config:set MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}  # Ajoutez cette ligne
+          heroku config:set MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}
 
       - name: Start ngrok tunnel
-        run: ./ngrok http 5313 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &  # Remplacez 5000 par le port de votre application
+        run: ./ngrok http 5313 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
 
       - name: Deploy to Heroku
-        run: |
-          heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
-          git push heroku HEAD:main
+        run: git push heroku HEAD:main
