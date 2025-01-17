@@ -40,7 +40,7 @@ jobs:
         run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
       - name: Install heroku-cli-login plugin
-        run: heroku plugins:install --git https://github.com/heroku/heroku-cli-login.git
+        run: heroku plugins:install https://github.com/heroku/heroku-cli-login.git  # Correction: Removed --git flag
 
       - name: Login to Heroku
         run: heroku login:api-key --key ${{ secrets.HEROKU_API_KEY }}
@@ -53,6 +53,15 @@ jobs:
           heroku config:set HEROKU_OAUTH_ID=c1c300a9-4c8f-41ee-90c1-ae3b9de1acdf
           heroku config:set HEROKU_OAUTH_SECRET=d268549c-cb2d-4b2d-9521-fc33a139dd15
           heroku config:set MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}
+
+      - name: Start ngrok tunnel
+        run: ./ngrok http 5311 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
+
+      - name: Run unit tests  # Added unit testing step
+        run: pytest Tests/  # Assuming your tests are in the 'Tests' directory
+
+      - name: Deploy to Heroku
+        run: git push heroku HEAD:main
 
       - name: Start ngrok tunnel
         run: ./ngrok http 5311 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
