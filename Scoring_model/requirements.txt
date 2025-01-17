@@ -25,7 +25,7 @@ kaleido==0.2.1  # Pour l'exportation des graphiques Plotly
 shap==0.42.1     # Pour l'explicabilité du modèle (SHAP values)
 
 # Dépendances pour la gestion des données
-install imbalanced-learn==0.9.1 # Pour gérer les données déséquilibrées
+imbalanced-learn==0.9.1 # Pour gérer les données déséquilibrées
 scikit-optimize==0.9.0  # Pour l'optimisation bayésienne
 
 # Dépendances Heroku spécifiques
