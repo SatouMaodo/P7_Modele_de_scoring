@@ -2,10 +2,12 @@ import mlflow.pyfunc
 import pandas as pd
 import streamlit as st
 import json
+import os
+os.environ["MLFLOW_TRACKING_URI"] = "https://2rJ0So4YeXlJwCZD6H5LDpZ7hWq_5hKUSHqeqExuSBAq3BS9E.ngrok.io"
 
     # Charger votre modèle MLflow enregistré
-    model_uri = "best_model.joblib" # ou un chemin local si le modèle est stocké localement
-    model = mlflow.pyfunc.load_model(model_uri)
+model_uri = os.environ["MLFLOW_TRACKING_URI"] + model_uri[7:] # Pour inclure l'URL ngrok
+model = mlflow.pyfunc.load_model(model_uri)
 
     # Définir une fonction de prédiction
 
