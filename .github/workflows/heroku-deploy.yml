@@ -9,7 +9,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
       NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
@@ -30,8 +29,11 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
+      - name: Install heroku-cli-login plugin
+        run: heroku plugins:install heroku-cli-login
+
       - name: Login to Heroku
-        run: heroku login
+        run: heroku login:api-key --key ${{ secrets.HEROKU_API_KEY }}
 
       - name: Set Heroku git remote
         run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
