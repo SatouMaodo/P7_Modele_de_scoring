@@ -1,4 +1,4 @@
-name: Heroku Deployment
+name: Deploy to Heroku
 
 on:
   push:
@@ -6,43 +6,43 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}  # Ajoutez cette ligne
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Cache pip packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-build-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-build-
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9' # Remplacez par la version de Python que vous utilisez
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest   # Installer pytest
 
-      - name: Run tests with pytest
-        run: pytest  # Exécuter les tests unitaires
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
       - name: Login to Heroku
-        uses: heroku/setup-v2@v2
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        run: heroku login -i -a ${{ secrets.HEROKU_APP_NAME }}
+
+      - name: Set Heroku config vars
+        run: |
+          heroku config:set HEROKU_OAUTH_ID=c1c300a9-4c8f-41ee-90c1-ae3b9de1acdf
+          heroku config:set HEROKU_OAUTH_SECRET=d268549c-cb2d-4b2d-9521-fc33a139dd15
+          heroku config:set MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}  # Ajoutez cette ligne
+
+      - name: Start ngrok tunnel
+        run: ./ngrok http 5313 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &  # Remplacez 5000 par le port de votre application
 
       - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12 
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        run: |
+          heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
+          git push heroku HEAD:main
