@@ -30,7 +30,7 @@ jobs:
         run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
       - name: Install heroku-cli-login plugin
-        run: heroku plugins:install heroku-cli-login
+        run: heroku plugins:install --git https://github.com/heroku/heroku-cli-login.git
 
       - name: Login to Heroku
         run: heroku login:api-key --key ${{ secrets.HEROKU_API_KEY }}
