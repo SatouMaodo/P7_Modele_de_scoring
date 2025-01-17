@@ -44,7 +44,7 @@ jobs:
       - name: Login to Heroku 
         run: heroku login:api-key --key ${{ secrets.HEROKU_API_KEY }} 
 
-      - name: Set Heroku git remote
+      - name: Set Heroku git remote # Réintégration de l'étape
         run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
 
       - name: Set Heroku config vars
@@ -64,10 +64,12 @@ jobs:
       - name: Start ngrok tunnel
         run: |
           ./ngrok http 5313 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} --region eu &
-          curl -s http://127.0.0.1:5313/api/tunnels | jq -r '.tunnels[0].public_url'
+          sleep 5
+          NGROK_URL=$(curl -s http://127.0.0.1:5313/api/tunnels | jq -r '.tunnels[0].public_url')
+          echo "::set-output name=ngrok_url::$NGROK_URL"
 
       - name: Print ngrok URL
-        run: echo "MLflow UI accessible via :$(curl -s http://127.0.0.1:5313/api/tunnels | jq -r '.tunnels[0].public_url')"
+        run: echo "MLflow UI accessible via :${{ steps.start-ngrok.outputs.ngrok_url }}"
 
       - name: Deploy to Heroku
         run: git push heroku HEAD:main -f
