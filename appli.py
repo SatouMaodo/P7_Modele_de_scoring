@@ -117,8 +117,8 @@ def impute_and_standardize(X):
 #Récupértion du best modèle
 best_model =joblib.load('best_model.joblib')
 df6= pd.read_csv('df6')
-y = df6['TARGET']
-X = df6.drop(columns=['TARGET'])
+y = df6['TARGET'][:50000]
+X = df6.drop(columns=['TARGET'])[:50000]
 threshold=0.75
 X_train, X_val, y_train, y_val = train_test_split( X,y, test_size=0.3, random_state=101)
 from sklearn.pipeline import Pipeline
