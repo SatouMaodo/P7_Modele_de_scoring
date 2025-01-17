@@ -1,0 +1,33 @@
+# Dépendances principales
+mlflow==2.19.0
+catboost==1.2.7
+cloudpickle==3.1.0
+ipywidgets==7.7.1
+numpy==1.26.4
+pandas==2.2.2
+pathlib==1.0.1
+psutil==5.9.5
+scikit-learn==1.6.1
+scipy==1.13.1
+xgboost==2.1.3
+
+# Dépendances pour Streamlit et ngrok
+streamlit==1.28.0
+pyngrok==6.0.0
+
+# Dépendances pour l'API et le modèle
+requests==2.31.0
+joblib==1.3.2
+
+# Dépendances pour les graphiques et l'explicabilité
+plotly==5.16.1
+kaleido==0.2.1  # Pour l'exportation des graphiques Plotly
+shap==0.42.1     # Pour l'explicabilité du modèle (SHAP values)
+
+# Dépendances pour la gestion des données
+imbalanced-learn==0.9.1 # Pour gérer les données déséquilibrées
+scikit-optimize==0.9.0  # Pour l'optimisation bayésienne
+
+# Dépendances Heroku spécifiques
+gunicorn==20.1.0  # Serveur WSGI pour Heroku
+psycopg2-binary==2.9.5 # Connecteur PostgreSQL pour Heroku (si vous utilisez une base de données PostgreSQL)
