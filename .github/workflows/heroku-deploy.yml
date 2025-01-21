@@ -44,7 +44,7 @@ jobs:
         run: heroku login:api-key --key ${{ secrets.HEROKU_API_KEY }}
 
       - name: Set Heroku git remote
-        run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }} # Use HEROKU_APP_NAME from env
+        run: heroku git:remote -a mon-app-suivi-mlflow # Use HEROKU_APP_NAME from env
 
       - name: Set Heroku config vars
         run: |
