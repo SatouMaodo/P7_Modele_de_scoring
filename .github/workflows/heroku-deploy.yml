@@ -36,7 +36,6 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
           pip install mlflow  # Install MLflow
-          pip install pyngrok # Install pyngrok
 
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
@@ -53,7 +52,7 @@ jobs:
 
       - name: Start MLflow server
         run: |
-          mlflow server --backend-store-uri ${{ env.MLFLOW_TRACKING_URI }} --default-artifact-root ./artifacts --host 127.0.0.1 --port 5313
+          mlflow server --host 127.0.0.1 --port 5313
 
       - name: Deploy to Heroku
         run: git push heroku HEAD:main  # Push to Heroku's main branch
