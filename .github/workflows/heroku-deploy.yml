@@ -43,13 +43,14 @@ jobs:
       - name: Login to Heroku
         run: heroku login:api-key --key ${{ secrets.HEROKU_API_KEY }}
 
+      # Configuration explicite de la télécommande Git
       - name: Set Heroku git remote
-        run: heroku git:remote -a mon-app-suivi-mlflow # Use HEROKU_APP_NAME from env
+        run: git remote add heroku https://git.heroku.com/${{ env.HEROKU_APP_NAME }}.git
 
       - name: Set Heroku config vars
         run: |
-          heroku config:set HEROKU_OAUTH_ID=c1c300a9-4c8f-41ee-90c1-ae3b9de1acdf -a mon-app-suivi-mlflow # Use HEROKU_APP_NAME from env
-          heroku config:set MLFLOW_TRACKING_URI=https://d483-34-106-155-85.ngrok-free.app -a mon-app-suivi-mlflow # Use HEROKU_APP_NAME from env
+          heroku config:set HEROKU_OAUTH_ID=c1c300a9-4c8f-41ee-90c1-ae3b9de1acdf -a ${{ env.HEROKU_APP_NAME }}
+          heroku config:set MLFLOW_TRACKING_URI=https://d483-34-106-155-85.ngrok-free.app -a ${{ env.HEROKU_APP_NAME }}
 
       - name: Deploy to Heroku
         run: git push heroku HEAD:main  # Push to Heroku's main branch
