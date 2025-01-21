@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
     steps:
       - name: Checkout code
@@ -54,12 +53,7 @@ jobs:
 
       - name: Start MLflow server
         run: |
-          mlflow server --backend-store-uri ${{ env.MLFLOW_TRACKING_URI }} --default-artifact-root ./artifacts --host 127.0.0.1 --port 5313 &
-
-      - name: Expose MLflow UI with ngrok
-        run: |
-          pyngrok config add-auth ${{ secrets.NGROK_AUTH_TOKEN }} # Add this line to authenticate
-          pyngrok http 5313 &  # Start ngrok tunnel for port 5313
+          mlflow server --backend-store-uri ${{ env.MLFLOW_TRACKING_URI }} --default-artifact-root ./artifacts --host 127.0.0.1 --port 5313
 
       - name: Deploy to Heroku
         run: git push heroku HEAD:main  # Push to Heroku's main branch
