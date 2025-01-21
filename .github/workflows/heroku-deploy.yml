@@ -48,8 +48,8 @@ jobs:
 
       - name: Set Heroku config vars
         run: |
-          heroku config:set HEROKU_OAUTH_ID=c1c300a9-4c8f-41ee-90c1-ae3b9de1acdf -a ${{ env.HEROKU_APP_NAME }} # Use HEROKU_APP_NAME from env
-          heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }} # Use HEROKU_APP_NAME from env
+          heroku config:set HEROKU_OAUTH_ID=c1c300a9-4c8f-41ee-90c1-ae3b9de1acdf -a mon-app-suivi-mlflow # Use HEROKU_APP_NAME from env
+          heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a mon-app-suivi-mlflow # Use HEROKU_APP_NAME from env
 
       - name: Deploy to Heroku
         run: git push heroku HEAD:main  # Push to Heroku's main branch
