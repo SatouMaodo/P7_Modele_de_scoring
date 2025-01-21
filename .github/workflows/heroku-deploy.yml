@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      HEROKU_APP_NAME: mon-app-suivi-mlflow
+      #HEROKU_APP_NAME: mon-app-suivi-mlflow
       NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
     steps:
