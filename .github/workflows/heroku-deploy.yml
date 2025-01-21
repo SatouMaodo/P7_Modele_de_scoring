@@ -37,6 +37,7 @@ jobs:
           pip install pytest
           pip install mlflow  # Install MLflow
           pip install pyngrok # Install pyngrok
+          pip install Flask
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
