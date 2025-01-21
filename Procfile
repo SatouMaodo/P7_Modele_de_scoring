@@ -1,1 +1,1 @@
-web: mlflow server --host 0.0.0.0 --port $PORT --backend-store-uri sqlite:///mlflow.db
+web: mlflow server --host 127.0.0.1 --port 5313
