@@ -1,1 +1,1 @@
-web: mlflow server --host 127.0.0.1 --port 5313
+web: gunicorn --bind 0.0.0.0:$PORT wsgi:app
