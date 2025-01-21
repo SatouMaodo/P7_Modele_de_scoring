@@ -46,12 +46,11 @@ jobs:
         run: heroku login:api-key --key ${{ secrets.HEROKU_API_KEY }}
 
       - name: Set Heroku git remote
-        run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
-
+        run: heroku git:remote -a mon-app-suivi-mlflow
       - name: Set Heroku config vars
         run: |
-          heroku config:set HEROKU_OAUTH_ID=c1c300a9-4c8f-41ee-90c1-ae3b9de1acdf -a ${{ secrets.HEROKU_APP_NAME }}
-          heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ secrets.HEROKU_APP_NAME }}
+          heroku config:set HEROKU_OAUTH_ID=c1c300a9-4c8f-41ee-90c1-ae3b9de1acdf -a mon-app-suivi-mlflow
+          heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a mon-app-suivi-mlflow
 
       - name: Start MLflow server
         run: |
