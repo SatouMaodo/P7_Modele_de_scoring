@@ -60,11 +60,7 @@ jobs:
 
       - name: Download model and artifacts
         run: |
-          mkdir -p model_artifacts
-          wget -q -O model_artifacts/best_model.joblib "https://raw.githubusercontent.com/SatouMaodo/P7_Modele_de_scoring/main/best_model.joblib" 
-          # Remplacez <votre_utilisateur>, <votre_repo>, <branche> par vos informations
-          # Adaptez le chemin vers votre modèle (best_model.joblib) si nécessaire
-
+          mkdir -p "mlruns/1/e168c89c821b4680a3a92d7ee0ed2e28/artifacts"
       - name: Deploy to Heroku
         run: |
           git push heroku HEAD:main
