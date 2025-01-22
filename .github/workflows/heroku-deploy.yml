@@ -57,11 +57,18 @@ jobs:
       - name: Set Heroku config vars
         run: |
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
-          heroku config:set MLFLOW_ARTIFACT_ROOT="./Scoring_model" -a ${{ env.HEROKU_APP_NAME }}  # Correction : Utilisation de HEROKU_APP_NAME
-      - name: Add Heroku SSH buildpack
-        run: heroku buildpacks:add heroku/ssh -a ${{ env.HEROKU_APP_NAME }}
+          heroku config:set MLFLOW_ARTIFACT_ROOT="./Scoring_model" -a ${{ env.HEROKU_APP_NAME }}
+
+      # Solution 3: Utilisation de l'action GitHub pour ajouter le buildpack SSH
+      - uses: heroku/setup-heroku@v1
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ env.HEROKU_APP_NAME }}
+           buildpacks: 
+             - heroku/heroku-ssh   
+
       - name: Deploy to Heroku
-        run: git push -f git@heroku.com:${{ env.HEROKU_APP_NAME }}.git HEAD:main # Correction : Utilisation de SSH et de -f
+        run: git push -f git@heroku.com:${{ env.HEROKU_APP_NAME }}.git HEAD:main
 
       - name: Start MLflow server
         run: |
