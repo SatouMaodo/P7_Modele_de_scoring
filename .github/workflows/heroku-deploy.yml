@@ -11,7 +11,6 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
     steps:
       - name: Checkout code
