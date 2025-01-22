@@ -57,10 +57,6 @@ jobs:
         run: |
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
           heroku config:set MLFLOW_ARTIFACT_ROOT="mlruns/1/e168c89c821b4680a3a92d7ee0ed2e28/artifacts" -a ${{ env.HEROKU_APP_NAME }}
-
-      - name: Download model and artifacts
-        run: |
-          mkdir -p "mlruns/1/e168c89c821b4680a3a92d7ee0ed2e28/artifacts"
       - name: Deploy to Heroku
         run: |
           git push heroku HEAD:main
@@ -69,5 +65,5 @@ jobs:
         run: heroku ps:scale web=1 -a ${{ env.HEROKU_APP_NAME }}
 
       - name: Start MLflow API server
-        run: heroku run "mlflow models serve -m model_artifacts --no-conda -h 0.0.0.0 -p $PORT" -a ${{ env.HEROKU_APP_NAME }}
+        run: heroku run "mlflow models serve ---backend-store-uri sqlite:///mlflow.db --no-conda -h 0.0.0.0 -p $PORT" -a ${{ env.HEROKU_APP_NAME }}
 
