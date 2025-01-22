@@ -69,7 +69,11 @@ jobs:
           arguments: heroku/heroku-ssh -a ${{ env.HEROKU_APP_NAME }}
 
       - name: Deploy to Heroku
-        run: git push -f git@heroku.com:${{ env.HEROKU_APP_NAME }}.git HEAD:main
+        uses: akhileshns/heroku-deploy@v3.12.12 # Utilisation de l'action de déploiement Heroku avec PAT
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Ajouter l'adresse e-mail Heroku
 
       - name: Start MLflow server
         run: |
