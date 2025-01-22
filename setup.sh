@@ -1,2 +1,2 @@
-export MLFLOW_TRACKING_URI="http://127.0.0.1:3313"
+export MLFLOW_TRACKING_URI="sqlite:///mlflow.db"
 
