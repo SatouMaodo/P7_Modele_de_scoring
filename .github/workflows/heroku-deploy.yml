@@ -54,6 +54,7 @@ jobs:
       - name: Set Heroku config vars
         run: |
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
+          heroku config:set MLFLOW_ARTIFACT_ROOT="./Scoring_model" -a mon-app-suivi-mlflow
 
       - name: Deploy to Heroku
         run: |
