@@ -74,8 +74,4 @@ jobs:
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }} # Ajouter l'adresse e-mail Heroku
 
-      - name: Start MLflow server
-        run: |
-          heroku run -d "mlflow server --backend-store-uri ${{ env.MLFLOW_TRACKING_URI }} --default-artifact-root $MLFLOW_ARTIFACT_ROOT --host 0.0.0.0 --port $PORT" -a ${{ env.HEROKU_APP_NAME }}
-
 
