@@ -63,8 +63,8 @@ jobs:
         run: heroku update
 
       - name: Add Heroku SSH buildpack # Solution 1: Ajout du buildpack SSH avec le nom correct
-        run: heroku buildpacks:add heroku/heroku-ssh -a ${{ env.HEROKU_APP_NAME }}
-      
+        run: heroku buildpacks:add heroku/heroku-ssh -a ${{ env.HEROKU_APP_NAME }} # Correction: Ajout de ${{ env.HEROKU_APP_NAME }}
+
       - name: Deploy to Heroku
         run: git push -f git@heroku.com:${{ env.HEROKU_APP_NAME }}.git HEAD:main
 
