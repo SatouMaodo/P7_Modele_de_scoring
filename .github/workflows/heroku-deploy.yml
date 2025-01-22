@@ -68,8 +68,7 @@ jobs:
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ env.HEROKU_APP_NAME }}
-          buildpacks:
-            - heroku/heroku-ssh
+          buildpacks: heroku/heroku-ssh
           
       - name: Deploy to Heroku
         run: git push -f git@heroku.com:${{ env.HEROKU_APP_NAME }}.git HEAD:main
