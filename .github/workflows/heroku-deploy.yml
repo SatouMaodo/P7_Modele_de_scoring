@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}  # Clé API Heroku
-      HEROKU_APP_NAME: mon-application-heroku  # Nom de l'application Heroku
+      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}   # Nom de l'application Heroku
       NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
     steps:
