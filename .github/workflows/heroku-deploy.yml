@@ -46,7 +46,7 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Login to Heroku
-        run: heroku login -i -a ${{ env.HEROKU_APP_NAME }}
+        run: heroku login -i  
 
       - name: Set Heroku git remote
         run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }}
