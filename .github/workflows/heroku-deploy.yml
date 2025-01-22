@@ -58,20 +58,20 @@ jobs:
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
           heroku config:set MLFLOW_ARTIFACT_ROOT="mlruns/1/e168c89c821b4680a3a92d7ee0ed2e28/artifacts" -a ${{ env.HEROKU_APP_NAME }}
 
-      - name: Update Heroku CLI # Solution 2: Mise à jour de Heroku CLI
-        run: heroku update
-
-      - name: Add Heroku SSH buildpack # Solution 3 (modifiée) : Utiliser l'action GitHub pour ajouter le buildpack SSH
-        uses: heroku/cli@main # Utilisation de la branche principale
-        with:
-          command: buildpacks:add
-          arguments: heroku/heroku-ssh -a ${{ env.HEROKU_APP_NAME }}
+      - name: Download model and artifacts
+        run: |
+          mkdir -p model_artifacts
+          wget -q -O model_artifacts/best_model.joblib "https://raw.githubusercontent.com/SatouMaodo/P7_Modele_de_scoring/main/best_model.joblib" 
+          # Remplacez <votre_utilisateur>, <votre_repo>, <branche> par vos informations
+          # Adaptez le chemin vers votre modèle (best_model.joblib) si nécessaire
 
       - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12 # Utilisation de l'action de déploiement Heroku avec PAT
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Ajouter l'adresse e-mail Heroku
+        run: |
+          git push heroku HEAD:main
 
+      - name: Scale web dyno
+        run: heroku ps:scale web=1 -a ${{ env.HEROKU_APP_NAME }}
+
+      - name: Start MLflow API server
+        run: heroku run "mlflow models serve -m model_artifacts --no-conda -h 0.0.0.0 -p $PORT" -a ${{ env.HEROKU_APP_NAME }}
 
