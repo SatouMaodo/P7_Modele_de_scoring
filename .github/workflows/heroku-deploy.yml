@@ -56,7 +56,7 @@ jobs:
       - name: Set Heroku config vars
         run: |
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
-          heroku config:set MLFLOW_ARTIFACT_ROOT="./Scoring_model" -a ${{ env.HEROKU_APP_NAME }}
+          heroku config:set MLFLOW_ARTIFACT_ROOT="mlruns/1/e168c89c821b4680a3a92d7ee0ed2e28/artifacts" -a ${{ env.HEROKU_APP_NAME }}
 
       - name: Update Heroku CLI # Solution 2: Mise à jour de Heroku CLI
         run: heroku update
