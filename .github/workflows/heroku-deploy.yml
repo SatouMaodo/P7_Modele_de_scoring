@@ -57,15 +57,14 @@ jobs:
       - name: Set Heroku config vars
         run: |
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
-          heroku config:set MLFLOW_ARTIFACT_ROOT="./Scoring_model" -a mon-app-suivi-mlflow
+          heroku config:set MLFLOW_ARTIFACT_ROOT="./Scoring_model" -a ${{ env.HEROKU_APP_NAME }}  # Correction : Utilisation de HEROKU_APP_NAME
 
       - name: Deploy to Heroku
-        run: |
-          git push heroku HEAD:main
+        run: git push -f git@heroku.com:${{ env.HEROKU_APP_NAME }}.git HEAD:main # Correction : Utilisation de SSH et de -f
 
       - name: Start MLflow server
         run: |
-          heroku run -d "mlflow server --backend-store-uri ${{ env.MLFLOW_TRACKING_URI }} --default-artifact-root ./artifacts --host 0.0.0.0 --port $PORT" -a ${{ env.HEROKU_APP_NAME }}
+          heroku run -d "mlflow server --backend-store-uri ${{ env.MLFLOW_TRACKING_URI }} --default-artifact-root $MLFLOW_ARTIFACT_ROOT --host 0.0.0.0 --port $PORT" -a ${{ env.HEROKU_APP_NAME }}
 
       - name: Expose MLflow UI with ngrok
         run: |
