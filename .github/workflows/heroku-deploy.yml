@@ -62,9 +62,15 @@ jobs:
       - name: Update Heroku CLI # Solution 2: Mise à jour de Heroku CLI
         run: heroku update
 
-      - name: Add Heroku SSH buildpack # Solution 1: Ajout du buildpack SSH avec le nom correct
-        run: heroku buildpacks:add heroku/heroku-ssh -a ${{ env.HEROKU_APP_NAME }} # Correction: Ajout de ${{ env.HEROKU_APP_NAME }}
-
+      # Solution 3 (modifiée) : Utiliser l'action GitHub pour ajouter le buildpack SSH
+      - name: Add Heroku SSH buildpack using GitHub Action
+        uses: heroku/setup-heroku@v1
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ env.HEROKU_APP_NAME }}
+          buildpacks:
+            - heroku/heroku-ssh
+          
       - name: Deploy to Heroku
         run: git push -f git@heroku.com:${{ env.HEROKU_APP_NAME }}.git HEAD:main
 
