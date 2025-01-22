@@ -9,8 +9,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}  # Clé API Heroku
-      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}   # Nom de l'application Heroku
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
       NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
     steps:
@@ -40,6 +40,11 @@ jobs:
           pip install mlflow
           pip install pyngrok
 
+      - name: Install Heroku CLI
+        run: |
+          sudo snap install --classic heroku
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Login to Heroku
         run: heroku login -i -a ${{ env.HEROKU_APP_NAME }}
 
@@ -57,8 +62,8 @@ jobs:
       - name: Start MLflow server
         run: |
           heroku run "mlflow server --backend-store-uri ${{ env.MLFLOW_TRACKING_URI }} --default-artifact-root ./artifacts --host 0.0.0.0 --port $PORT &" -a ${{ env.HEROKU_APP_NAME }}
-          
+
       - name: Expose MLflow UI with ngrok
         run: |
           pyngrok config add-auth ${{ secrets.NGROK_AUTH_TOKEN }}
-          heroku run "pyngrok http $PORT" -a ${{ env.HEROKU_APP_NAME }}
+          heroku run -d "ngrok http $PORT --log=stdout" -a ${{ env.HEROKU_APP_NAME }} # Exécuter ngrok en arrière-plan
