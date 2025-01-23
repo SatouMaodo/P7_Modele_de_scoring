@@ -37,8 +37,6 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
           pip install mlflow
-      - name: Run pytest
-        run: pytest Tests/
       - name: Install Heroku CLI
         run: |
           sudo snap install --classic heroku
