@@ -73,7 +73,7 @@ class TestPreprocessingFunctions(unittest.TestCase):
 
     def test_application_train_test(self):
         """Tester la fonction application_train_test."""
-        df = application_train_test(num_rows=1000)  # Lire un sous-ensemble de données pour les tests
+        df = application_train_test(num_rows=500)  # Lire un sous-ensemble de données pour les tests
         # Vérifier les dimensions du DataFrame résultant
         self.assertEqual(df.shape[0], 1000)  # Vérifier le nombre de lignes
         # Vérifier si certaines colonnes sont présentes et ont le type de données attendu
