@@ -66,7 +66,7 @@ class TestPreprocessingFunctions(unittest.TestCase):
         self.bureau_balance_path = 'Tests/bureau_balances.csv'
         self.credit_card_balance_path = 'Tests/credit_card_balances.csv'
         self.installments_payments_path = 'Tests/installments_payment.csv'
-        self.pos_cash_balance_path = 'Tests/POS_CASH_BALANCE.csv'
+        self.pos_cash_balance_path = 'Tests/POSH_CASH_BALANCE.csv'
         self.previous_application_path = 'Tests/previous_application.csv'
 
 
