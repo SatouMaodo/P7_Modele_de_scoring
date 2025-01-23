@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 import numpy as np
+import gc
 import pandas as pd
 from contextlib import contextmanager
 from sklearn.metrics import roc_auc_score, roc_curve
