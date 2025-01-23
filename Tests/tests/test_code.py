@@ -39,7 +39,7 @@ import pytest
 from my_functions import (
    application_train_test, bureau_and_balance,
     previous_applications, pos_cash, credit_card_balance,
-    installments_payments,calculate_total_cost,optimize_threshold_and_metrics
+    installments_payments
 )
 
 
