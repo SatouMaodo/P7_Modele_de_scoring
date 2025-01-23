@@ -9,8 +9,7 @@ import numpy as np
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, FunctionTransformer
-pip install ploty
-pip install PIL
+
 from PIL import Image
 import plotly.graph_objects as go
 import mlflow.pyfunc
