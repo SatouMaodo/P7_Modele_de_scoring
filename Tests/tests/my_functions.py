@@ -201,7 +201,7 @@ def previous_applications(num_rows = None, nan_as_category = True):
 
 # Preprocess POS_CASH_balance.csv
 def pos_cash(num_rows = None, nan_as_category = True):
-    pos = pd.read_csv('Tests/POS_CASH_BALANCE.csv', nrows = num_rows)
+    pos = pd.read_csv('Tests/POSH_CASH_BALANCE.csv', nrows = num_rows)
     pos, cat_cols = one_hot_encoder(pos, nan_as_category= True)
     # Features
     aggregations = {
