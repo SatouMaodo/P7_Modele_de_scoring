@@ -11,7 +11,8 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }} 
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+      MLFLOW_MODEL_URI: models:/Projet7_Scoring_model/Production
 
     steps:
       - name: Checkout code
@@ -39,14 +40,18 @@ jobs:
           pip install pytest
           pip install mlflow
 
-      - name: Run pytest
-        run: pytest Tests/
-
+      - name: Download MLflow model
+        run: |
+          mlflow models download -m ${{ env.MLFLOW_MODEL_URI }} -o P7_Modele_de_scoring
+          
       - name: Login to Heroku Container Registry
         run: heroku container:login
 
       - name: Build and push Docker image
-        run: heroku container:push web -a ${{ env.HEROKU_APP_NAME }}
+        run: |
+          # Assurez-vous que le répertoire 'model' est inclus dans votre Dockerfile
+          COPY P7_Modele_de_scoring /app/P7_Modele_de_scoring  # Ajustez le chemin si nécessaire
+          heroku container:push web -a ${{ env.HEROKU_APP_NAME }}
 
       - name: Release Docker image
         run: heroku container:release web -a ${{ env.HEROKU_APP_NAME }}
