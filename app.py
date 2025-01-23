@@ -9,9 +9,13 @@ import numpy as np
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, FunctionTransformer
+pip install ploty
+pip install PIL
 from PIL import Image
 import plotly.graph_objects as go
-import plotly.graph_objects as go
+import mlflow.pyfunc
+
+best_model = mlflow.pyfunc.load_model(best_model.joblib)
 def gauge_chart(prediction, threshold):
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
@@ -56,7 +60,7 @@ def impute_and_standardize(X):
 
     return X_scaled
 # Chargement du modèle et des données
-best_model = joblib.load('best_model.joblib')
+#best_model = joblib.load('best_model.joblib')
 
 test_df= pd.read_csv('test_df.csv')
 y = test_df['TARGET']
