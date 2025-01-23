@@ -8,3 +8,4 @@ scipy==1.13.1
 gunicorn==20.1.0
 whitenoise # Ajouté pour servir des fichiers statiques efficacement sur Heroku
 paramiko
+pytest
