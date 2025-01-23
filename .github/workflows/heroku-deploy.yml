@@ -11,9 +11,8 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-      MLFLOW_MODEL_URI: models:/Projet7_Scoring_model/Production
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -27,7 +26,6 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -38,30 +36,37 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
-          pip install mlflow --upgrade  # Upgrade MLflow
-
-      - name: Install mlflow for download
-        run: pip install mlflow --upgrade
-
-      - name: Download MLflow model
+          pip install mlflow
+      - name: Run pytest
+        run: pytest Tests/
+      - name: Install Heroku CLI
         run: |
-          mlflow models download -m ${{ env.MLFLOW_MODEL_URI }} -o P7_Modele_de_scoring
-          
-      - name: Login to Heroku Container Registry
-        run: heroku container:login
-
-      - name: Build and push Docker image
+          sudo snap install --classic heroku
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Login to Heroku
         run: |
-          # Assuming your Dockerfile is in the root directory
-          # And you want to copy the model to /app/P7_Modele_de_scoring in the image
-          docker build -t ${{ env.HEROKU_APP_NAME }} . --build-arg MLFLOW_MODEL_URI=${{ env.MLFLOW_MODEL_URI }}
-          docker tag ${{ env.HEROKU_APP_NAME }} registry.heroku.com/${{ env.HEROKU_APP_NAME }}/web
-          docker push registry.heroku.com/${{ env.HEROKU_APP_NAME }}/web
-          
-
-      - name: Release Docker image
-        run: heroku container:release web -a ${{ env.HEROKU_APP_NAME }}
+          unset HEROKU_API_KEY
+          heroku login -i
+          export HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }}
+      - name: Set Heroku git remote
+        run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }}
 
       - name: Set Heroku config vars
         run: |
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
+          #heroku config:set MLFLOW_ARTIFACT_ROOT="mlruns/1/e168c89c821b4680a3a92d7ee0ed2e28/artifacts" -a ${{ env.HEROKU_APP_NAME }}
+      - name: Update Heroku CLI # 
+        run: heroku update
+
+      - name: Add Heroku SSH buildpack 
+        uses: heroku/cli@main # Utilisation de la branche principale
+        with:
+          command: buildpacks:add
+          arguments: heroku/heroku-ssh -a ${{ env.HEROKU_APP_NAME }}
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12 # Utilisation de l'action de déploiement Heroku avec PAT
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Ajouter l'adresse e-mail Heroku
