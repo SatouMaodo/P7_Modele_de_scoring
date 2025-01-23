@@ -9,3 +9,4 @@ gunicorn==20.1.0
 whitenoise # Ajouté pour servir des fichiers statiques efficacement sur Heroku
 paramiko
 seaborn
+pytest
