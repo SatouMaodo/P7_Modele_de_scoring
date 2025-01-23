@@ -38,7 +38,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
-          pip install mlflow
+          pip install mlflow --upgrade  # Upgrade MLflow
+
+      - name: Run pytest
+        run: pytest Tests/
 
       - name: Download MLflow model
         run: |
@@ -49,9 +52,12 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          # Assurez-vous que le répertoire 'model' est inclus dans votre Dockerfile
-          COPY P7_Modele_de_scoring /app/P7_Modele_de_scoring  # Ajustez le chemin si nécessaire
-          heroku container:push web -a ${{ env.HEROKU_APP_NAME }}
+          # Assuming your Dockerfile is in the root directory
+          # And you want to copy the model to /app/P7_Modele_de_scoring in the image
+          docker build -t ${{ env.HEROKU_APP_NAME }} . --build-arg MLFLOW_MODEL_URI=${{ env.MLFLOW_MODEL_URI }}
+          docker tag ${{ env.HEROKU_APP_NAME }} registry.heroku.com/${{ env.HEROKU_APP_NAME }}/web
+          docker push registry.heroku.com/${{ env.HEROKU_APP_NAME }}/web
+          
 
       - name: Release Docker image
         run: heroku container:release web -a ${{ env.HEROKU_APP_NAME }}
