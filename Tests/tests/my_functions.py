@@ -43,7 +43,7 @@ import joblib
 import mlflow
 import os
 from mlflow.models.signature import infer_signature
-warnings.simplefilter(action='ignore', category=FutureWarning)
+
 #***************************#Prétraitement des données et création de nouvelles variables*******************************************
 ###########################################################################################################################################
 #***************************#Prétraitement des données et création de nouvelles variables*******************************************
