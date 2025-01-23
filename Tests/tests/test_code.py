@@ -34,7 +34,7 @@ import joblib
 import mlflow
 import os
 from mlflow.models.signature import infer_signature
-warnings.simplefilter(action='ignore', category=FutureWarning)
+
 
 from my_functions import (
    application_train_test, bureau_and_balance,
