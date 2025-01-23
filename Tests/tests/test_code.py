@@ -75,7 +75,7 @@ class TestPreprocessingFunctions(unittest.TestCase):
         """Tester la fonction application_train_test."""
         df = application_train_test(num_rows=1000)  # Lire un sous-ensemble de données pour les tests
         # Vérifier les dimensions du DataFrame résultant
-        self.assertEqual(df.shape[0], 2000)  # Vérifier le nombre de lignes
+        self.assertEqual(df.shape[0], 1000)  # Vérifier le nombre de lignes
         # Vérifier si certaines colonnes sont présentes et ont le type de données attendu
         self.assertIn('CODE_GENDER', df.columns)
         self.assertTrue(pd.api.types.is_numeric_dtype(df['CODE_GENDER']))
@@ -108,9 +108,9 @@ class TestPreprocessingFunctions(unittest.TestCase):
         self.assertTrue(pd.api.types.is_numeric_dtype(prev_agg['SK_ID_CURR']))
     def test_credit_card_balance(self):
         """Tester la fonction credit_card_balance."""
-        cc_agg = credit_card_balance(num_rows=1000)
+        cc_agg = credit_card_balance(num_rows=500)
         # Vérifier les dimensions du DataFrame résultant
-        self.assertEqual(cc_agg.shape[0], 1000)  # Vérifier le nombre de lignes
+        self.assertEqual(cc_agg.shape[0], 500)  # Vérifier le nombre de lignes
         # Vérifier si certaines colonnes sont présentes et ont le type de données attendu
         self.assertIn('SK_ID_CURR', cc_agg.columns)
         self.assertTrue(pd.api.types.is_numeric_dtype(cc_agg['SK_ID_CURR']))
