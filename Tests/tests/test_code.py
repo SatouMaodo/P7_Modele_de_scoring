@@ -60,13 +60,13 @@ class TestPreprocessingFunctions(unittest.TestCase):
     def setUp(self):
         """Initialiser les données de test."""
         # Vous pouvez utiliser des exemples de données ou des fichiers CSV plus petits pour les tests
-        self.application_train_path = 'Tests/application_train.csv'
-        self.application_test_path = 'Tests/application_test.csv'
-        self.bureau_path = 'Tests/bureau.csv'
-        self.bureau_balance_path = 'Tests/bureau_balance.csv'
-        self.credit_card_balance_path = 'Tests/credit_card_balance.csv'
-        self.installments_payments_path = 'Tests/installments_payments.csv'
-        self.pos_cash_balance_path = 'Tests/POS_CASH_balance.csv'
+        self.application_train_path = 'Tests/application_trains.csv'
+        self.application_test_path = 'Tests/application_tests.csv'
+        self.bureau_path = 'Tests/bureaux.csv'
+        self.bureau_balance_path = 'Tests/bureau_balances.csv'
+        self.credit_card_balance_path = 'Tests/credit_card_balances.csv'
+        self.installments_payments_path = 'Tests/installments_payment.csv'
+        self.pos_cash_balance_path = 'Tests/POS_CASH_BALANCE.csv'
         self.previous_application_path = 'Tests/previous_application.csv'
 
 
