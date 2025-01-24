@@ -1,5 +1,5 @@
 #!/bin/bash
-export MLFLOW_TRACKING_URI="./mlruns/1/e168c89c821b4680a3a92d7ee0ed2e28/artifacts"
+export MLFLOW_TRACKING_URI="https://698f-35-237-11-77.ngrok-free.app"
 #export MLFLOW_MODEL_URI="models:/Scoring_model"
 #export MLFLOW_TRACKING_URI="https://5451-34-16-135-108.ngrok-free.app"
 # Remplacez par l'URI de votre serveur MLflow si nécessaire
