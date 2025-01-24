@@ -11,3 +11,4 @@ paramiko
 seaborn
 pytest
 streamlit
+shap
