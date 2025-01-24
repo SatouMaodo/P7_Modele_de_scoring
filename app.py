@@ -59,7 +59,7 @@ def impute_and_standardize(X):
 
     return X_scaled
 # Chargement du modèle et des données
-#best_model = joblib.load('best_model.joblib')
+best_model = joblib.load('best_model.joblib')
 
 test_df= pd.read_csv('test_df.csv')
 y = test_df['TARGET']
