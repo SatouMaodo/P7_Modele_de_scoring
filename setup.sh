@@ -1,6 +1,6 @@
 #!/bin/bash
 export MLFLOW_TRACKING_URI="./mlruns"
-
+export MLFLOW_MODEL_URI="models:/Projet7_Scoring_model/v1"
 #export MLFLOW_TRACKING_URI="https://5451-34-16-135-108.ngrok-free.app"
 # Remplacez par l'URI de votre serveur MLflow si nécessaire
 #mlflow models serve -m models:file:///mlruns -h 0.0.0.0 -p 8080 &
