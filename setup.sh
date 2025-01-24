@@ -15,5 +15,5 @@ pip install mlflow
 mlflow models download -m "$MLFLOW_TRACKING_URI" -o model
 
 # Définissez les variables d'environnement pour votre application
-export MLFLOW_MODEL_PATH='best_model.joblib' # Chemin vers le modèle dans l'image Docker
+export MLFLOW_MODEL_PATH='models:/Projet7_Scoring_model/Production'
 
