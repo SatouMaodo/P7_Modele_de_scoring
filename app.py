@@ -14,7 +14,7 @@ from PIL import Image
 import plotly.graph_objects as go
 import mlflow.pyfunc
 
-best_model = mlflow.pyfunc.load_model(best_model.joblib)
+best_model = mlflow.pyfunc.load_model('best_model.joblib')
 def gauge_chart(prediction, threshold):
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
