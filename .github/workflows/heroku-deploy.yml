@@ -40,7 +40,10 @@ jobs:
 
 
       - name: Login to Heroku
-        run: heroku login -i --key ${{ secrets.HEROKU_API_KEY }} # Non-interactive login
+        run: |
+         unset HEROKU_API_KEY
+         heroku login -i
+         export HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }}
 
       - name: Set Heroku git remote
         run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }}
