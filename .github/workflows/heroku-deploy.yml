@@ -19,9 +19,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.cache/pip
-            venv
+          path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
@@ -36,15 +34,10 @@ jobs:
           pip install -r requirements.txt
           pip install mlflow
           pip install gunicorn
-      - name: Install Heroku CLI
-        run: |
-          sudo snap install --classic heroku
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          pip install heroku # Install Heroku CLI using pip
       - name: Login to Heroku
-        run: |
-          unset HEROKU_API_KEY
-          heroku login -i
-          export HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }}
+        run: heroku login -i --key ${{ secrets.HEROKU_API_KEY }} # Non-interactive login
+
       - name: Set Heroku git remote
         run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }}
 
@@ -53,7 +46,7 @@ jobs:
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
       - name: Deploy to Heroku
         run: |
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
-          git push heroku main:master
+          heroku config:set HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }} -a ${{ env.HEROKU_APP_NAME }}
+          heroku config:set HEROKU_APP_NAME=${{ env.HEROKU_APP_NAME }} -a ${{ env.HEROKU_APP_NAME }}
+          heroku config:set HEROKU_EMAIL=${{ secrets.HEROKU_EMAIL }} -a ${{ env.HEROKU_APP_NAME }}
+          git push heroku main:main # Push to the main branch
