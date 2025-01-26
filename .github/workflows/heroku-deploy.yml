@@ -11,7 +11,6 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
     steps:
       - name: Checkout code
@@ -35,9 +34,8 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest
           pip install mlflow
-          pip install pyngrok
+          pip install gunicorn
       - name: Install Heroku CLI
         run: |
           sudo snap install --classic heroku
@@ -53,27 +51,7 @@ jobs:
       - name: Set Heroku config vars
         run: |
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
-          heroku config:set MLFLOW_ARTIFACT_ROOT="./Scoring_model" -a ${{ env.HEROKU_APP_NAME }}
-      - name: Update Heroku CLI # Solution 2: Mise à jour de Heroku CLI
-        run: heroku update
-
-      - name: Add Heroku SSH buildpack # Solution 3 (modifiée) : Utiliser l'action GitHub pour ajouter le buildpack SSH
-        uses: heroku/cli@main # Utilisation de la branche principale
-        with:
-          command: buildpacks:add
-          arguments: heroku/heroku-ssh -a ${{ env.HEROKU_APP_NAME }}
-
       - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12 # Utilisation de l'action de déploiement Heroku avec PAT
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Ajouter l'adresse e-mail Heroku
-
-      - name: Start MLflow server
         run: |
-          heroku run -d "mlflow server --backend-store-uri ${{ env.MLFLOW_TRACKING_URI }} --default-artifact-root $MLFLOW_ARTIFACT_ROOT --host 0.0.0.0 --port $PORT" -a ${{ env.HEROKU_APP_NAME }}
-      - name: Expose MLflow UI with ngrok
-        run: |
-          pyngrok config add-auth ${{ secrets.NGROK_AUTH_TOKEN }}
-          heroku run -d "ngrok http $PORT --log=stdout" -a ${{ env.HEROKU_APP_NAME }}
+          heroku buildpacks:set heroku/python -a ${{ env.HEROKU_APP_NAME }}
+          git push heroku main:master
