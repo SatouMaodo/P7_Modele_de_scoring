@@ -1,4 +1,3 @@
-
 name: Deploy to Heroku
 
 on:
@@ -37,13 +36,14 @@ jobs:
           pip install gunicorn
           # Install the Heroku CLI (This step needs modifications for OS other than Ubuntu 22.04)
           sudo snap install --classic heroku
-
+      
 
       - name: Login to Heroku
         run: |
          unset HEROKU_API_KEY
-         heroku login -i
-         export HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }}
+         #heroku login -i # Commented out
+         echo ${{ secrets.HEROKU_API_KEY }} | heroku login --non-interactive
+
 
       - name: Set Heroku git remote
         run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }}
