@@ -38,11 +38,9 @@ jobs:
           sudo snap install --classic heroku
       
 
-      - name: Login to Heroku
+      - name: Login to Heroku Container Registry
         run: |
-         unset HEROKU_API_KEY
-         #heroku login -i # Commented out
-         echo ${{ secrets.HEROKU_API_KEY }} | heroku login --non-interactive
+          echo ${{ secrets.HEROKU_API_KEY }} | docker login --username=_ --password-stdin registry.heroku.com
 
 
       - name: Set Heroku git remote
