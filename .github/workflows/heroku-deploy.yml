@@ -42,9 +42,11 @@ jobs:
         run: pytest Tests/
       
 
-      - name: Login to Heroku Container Registry
+      - name: Login to Heroku
         run: |
-          echo ${{ secrets.HEROKU_API_KEY }} | docker login --username=_ --password-stdin registry.heroku.com
+          unset HEROKU_API_KEY
+          heroku login -i
+          export HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }}
 
 
       - name: Set Heroku git remote
@@ -54,16 +56,10 @@ jobs:
         run: |
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
 
-      - name: Configure Git Credentials
-        run: |
-          git config --global user.email "amsatoun504@gmail.com"
-          git config --global user.name "SatouMaodo"
-          echo "machine git.heroku.com login _ password ${{ secrets.HEROKU_API_KEY }}" >> ~/.netrc
-          
-      - name: Configure Git Pull Behavior
-        run: git config pull.rebase false 
         
       - name: Deploy to Heroku
-        run: |
-          git pull heroku main --allow-unrelated-histories
-          git push heroku main:main #
+        uses: akhileshns/heroku-deploy@v3.12.12 # Utilisation de l'action de déploiement Heroku avec PAT
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Ajouter l'adresse e-mail Heroku
