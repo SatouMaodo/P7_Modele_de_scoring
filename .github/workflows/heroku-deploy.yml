@@ -34,8 +34,12 @@ jobs:
           pip install -r requirements.txt
           pip install mlflow
           pip install gunicorn
+          pip install pytest
           # Install the Heroku CLI (This step needs modifications for OS other than Ubuntu 22.04)
           sudo snap install --classic heroku
+          
+      - name: Run pytest
+        run: pytest Tests/
       
 
       - name: Login to Heroku Container Registry
