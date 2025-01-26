@@ -57,4 +57,5 @@ jobs:
           echo "machine git.heroku.com login _ password ${{ secrets.HEROKU_API_KEY }}" >> ~/.netrc
       - name: Deploy to Heroku
         run: |
-          git push heroku main:main # Push to the main branch
+          git pull heroku main
+          git push heroku main:main #
