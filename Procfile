@@ -1,1 +1,1 @@
-web: gunicorn mon_application_mlflow.demarrer:app --bind 0.0.0.0:$PORT
+web: mlflow models serve -m models:/Projet7_Scoring_model/Production -h 0.0.0.0 -p $PORT
