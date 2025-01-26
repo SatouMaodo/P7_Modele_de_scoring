@@ -1,3 +1,4 @@
+
 name: Deploy to Heroku
 
 on:
@@ -34,7 +35,10 @@ jobs:
           pip install -r requirements.txt
           pip install mlflow
           pip install gunicorn
-          pip install heroku # Install Heroku CLI using pip
+          # Install the Heroku CLI (This step needs modifications for OS other than Ubuntu 22.04)
+          sudo snap install --classic heroku
+
+
       - name: Login to Heroku
         run: heroku login -i --key ${{ secrets.HEROKU_API_KEY }} # Non-interactive login
 
@@ -46,7 +50,4 @@ jobs:
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
       - name: Deploy to Heroku
         run: |
-          heroku config:set HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }} -a ${{ env.HEROKU_APP_NAME }}
-          heroku config:set HEROKU_APP_NAME=${{ env.HEROKU_APP_NAME }} -a ${{ env.HEROKU_APP_NAME }}
-          heroku config:set HEROKU_EMAIL=${{ secrets.HEROKU_EMAIL }} -a ${{ env.HEROKU_APP_NAME }}
           git push heroku main:main # Push to the main branch
