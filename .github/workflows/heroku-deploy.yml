@@ -53,5 +53,5 @@ jobs:
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
       - name: Deploy to Heroku
         run: |
-          heroku buildpacks:set heroku/python -a ${{ env.HEROKU_APP_NAME }}
+          #heroku buildpacks:set heroku/python -a ${{ env.HEROKU_APP_NAME }}
           git push heroku main:master
