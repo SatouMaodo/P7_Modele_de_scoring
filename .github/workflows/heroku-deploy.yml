@@ -61,5 +61,5 @@ jobs:
         
       - name: Deploy to Heroku
         run: |
-          git pull heroku main
+          git pull heroku main --allow-unrelated-histories
           git push heroku main:main #
