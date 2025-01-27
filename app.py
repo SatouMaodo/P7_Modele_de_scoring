@@ -9,12 +9,10 @@ import numpy as np
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, FunctionTransformer
-
 from PIL import Image
 import plotly.graph_objects as go
-import mlflow.pyfunc
+import plotly.graph_objects as go
 
-best_model = mlflow.pyfunc.load_model('best_model.joblib')
 def gauge_chart(prediction, threshold):
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
