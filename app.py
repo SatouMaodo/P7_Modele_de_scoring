@@ -11,7 +11,19 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, FunctionTransformer
 from PIL import Image
 import plotly.graph_objects as go
-import plotly.graph_objects as go
+import mlflow.pyfunc
+import requests
+model_path = os.path.join(os.getcwd(), "model")
+model = mlflow.pyfunc.load_model(model_path)
+
+# Créer une fonction pour effectuer des prédictions à l'aide de l'API
+def predict_with_api(input_data):
+    api_url = "https://mon-app-suivi-mlflow-ff2b9c82a88e.herokuapp.com/invocations"  # Remplacez par l'URL de votre API Heroku
+    headers = {"Content-Type": "application/json"}
+    data = input_data.to_json()  # Convertir les données d'entrée en JSON
+    response = requests.post(api_url, headers=headers, data=data)
+    prediction = response.json()
+    return prediction
 
 def gauge_chart(prediction, threshold):
     fig = go.Figure(go.Indicator(
