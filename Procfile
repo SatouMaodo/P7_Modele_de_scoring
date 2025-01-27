@@ -1,1 +1,1 @@
-web: gunicorn app:app --log-level info
+web: gunicorn --bind 0.0.0.0:$PORT main:app
