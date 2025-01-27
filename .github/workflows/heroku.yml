@@ -1,0 +1,62 @@
+name: Deploy to Heroku
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }} 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install mlflow
+          pip install gunicorn
+          pip install pytest
+          # Install the Heroku CLI 
+          curl https://cli-assets.heroku.com/install.sh | sh
+      - name: Run pytest
+        run: pytest Tests/
+      
+
+      - name: Login to Heroku
+        run: |
+          unset HEROKU_API_KEY
+          heroku login -i
+          export HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }}
+      - name: Set Heroku git remote
+        run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }}
+
+      - name: Set Heroku config vars
+        run: |
+          heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
+          # Set the model path as a config var
+          heroku config:set MLFLOW_MODEL_PATH="models:/mlruns/1" -a ${{ env.HEROKU_APP_NAME }}
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12 
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_buildpack: "heroku/python"
