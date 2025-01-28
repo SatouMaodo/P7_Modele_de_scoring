@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1738064878775
+current_stage: None
+description: null
+last_updated_timestamp: 1738064878775
+name: Projet7_Scoring_model
+run_id: f783dd49b56049e4a26b2631b58b83f2
+run_link: null
+source: /content/mlflow.db/782400809538395341/f783dd49b56049e4a26b2631b58b83f2/artifacts/Scoring_model
+status: READY
+status_message: null
+storage_location: /content/mlflow.db/782400809538395341/f783dd49b56049e4a26b2631b58b83f2/artifacts/Scoring_model
+user_id: null
+version: 1
