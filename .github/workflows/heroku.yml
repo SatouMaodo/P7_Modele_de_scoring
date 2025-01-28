@@ -54,7 +54,7 @@ jobs:
           heroku config:set MLFLOW_TRACKING_URI=${{ env.MLFLOW_TRACKING_URI }} -a ${{ env.HEROKU_APP_NAME }}
           # Set the model path as a config var
           #heroku config:set MLFLOW_MODEL_PATH="models:/mlruns/1" -a ${{ env.HEROKU_APP_NAME }}
-          heroku config:set MLFLOW_TRACKING_URI sqlite:///mlflow.db  -a ${{ env.HEROKU_APP_NAME }}
+          heroku config:set MLFLOW_TRACKING_URI=sqlite:///mlflow.db  -a ${{ env.HEROKU_APP_NAME }}
       - name: Deploy to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12 
         with:
