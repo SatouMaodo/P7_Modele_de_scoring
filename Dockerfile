@@ -1,16 +1,12 @@
-FROM python:3.9-slim
+FROM python:3.9-slim-buster
 
-   # Install mlflow (if it's not already in the image)
-   RUN pip install mlflow
+WORKDIR /app
 
-   # Set working directory
-   WORKDIR /app
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-   # Copy project files
-   COPY . .
+COPY mlflow.db /app/mlflow.db # Copiez votre base de données mlflow.db
 
-   # Expose port
-   EXPOSE 5000
+EXPOSE 5333
 
-   # Run mlflow ui
-   CMD ["mlflow", "ui", "--backend-store-uri", "file:///app/mlruns", "--host", "0.0.0.0", "--port", "5000"]
+CMD ["mlflow", "ui", "--backend-store-uri", "sqlite:///mlflow.db", "--port", "5333", "--default-artifact-root", "sqlite:///mlflow.db"]
