@@ -9,4 +9,4 @@ COPY mlflow.db /app/mlflow.db
 
 EXPOSE 5313
 
-CMD ["mlflow", "ui", "--backend-store-uri", "sqlite:///mlflow.db", "--port", "5313", "--default-artifact-root", "sqlite:///mlflow.db"]
+CMD ["mlflow", "ui", "--backend-store-uri", "sqlite:///mlflow.db", "--port", "5313", "--default-artifact-root", "sqlite:///mlflow.db", "--host", "127.0.0.1"]
