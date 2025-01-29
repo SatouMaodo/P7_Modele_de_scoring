@@ -1,34 +1,57 @@
-name: Deploy to Cloud Run
+name: Deploy to Heroku
 
 on:
   push:
     branches:
-      - main # or your desired branch
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      MLFLOW_TRACKING_URI: ${{ secrets.YOUR_NGROK_URL }} # Replace with your ngrok URL secret
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
+      - name: Cache dependencies
+        uses: actions/cache@v3
         with:
-          credentials_json: ${{ secrets.GCLOUD_CREDENTIALS }}
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.11' 
 
-      - name: Build and push Docker image
+      - name: Install dependencies
         run: |
-          gcloud builds submit --tag gcr.io/$PROJECT_ID/$SERVICE_NAME .
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # Install the Heroku CLI
+          curl https://cli-assets.heroku.com/install.sh | sh
+      - name: Run pytest
+        run: pytest Tests/
 
-      - name: Deploy to Cloud Run
+      - name: Login to Heroku
         run: |
-          gcloud run deploy $SERVICE_NAME \
-            --image gcr.io/$PROJECT_ID/$SERVICE_NAME \
-            --platform managed \
-            --region $REGION \
-            --allow-unauthenticated
+          echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
+      - name: Set Heroku git remote
+        run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
+
+      - name: Set Heroku config vars
+        run: |
+          heroku config:set MLFLOW_TRACKING_URI="$MLFLOW_TRACKING_URI" -a ${{ secrets.HEROKU_APP_NAME }}
+          # Instead of setting a local SQLite URI, use a cloud-based option if possible
+          # Here, we're setting it to the ngrok public URL
+          
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12 
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          #heroku_buildpack: "heroku/python"
