@@ -1,12 +1,21 @@
-FROM python:3.9-slim
+FROM buildpack-deps:buster-scm
 
-WORKDIR /app
+   # Install Docker client
+   RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
+       sh get-docker.sh && \
+       rm get-docker.sh
 
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+   # Install mlflow
+   RUN pip install mlflow
 
-COPY . .
+   # Set working directory
+   WORKDIR /app
 
-EXPOSE 5000
+   # Copy project files
+   COPY . .
 
-CMD ["mlflow", "ui", "--backend-store-uri", "file:///app/mlruns", "--host", "0.0.0.0", "--port", "5000"]
+   # Expose port
+   EXPOSE 5000
+
+   # Run mlflow ui
+   CMD ["mlflow", "ui", "--backend-store-uri", "file:///app/mlruns", "--host", "0.0.0.0", "--port", "5000"]
