@@ -18,4 +18,4 @@ FROM buildpack-deps:buster-scm
    EXPOSE 5000
 
    # Run mlflow ui
-   CMD ["mlflow", "ui", "--backend-store-uri", "file:///app/mlruns", "--host", "0.0.0.0", "--port", "5000"]
+   CMD ["mlflow", "ui", "--backend-store-uri", "file:///app/mlruns/", "--host", "0.0.0.0", "--port", "5000"]
