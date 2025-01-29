@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY mlflow.db /app/mlflow.db # Copiez votre base de données mlflow.db
+COPY mlflow.db /app/mlflow.db 
 
 EXPOSE 5311
 
