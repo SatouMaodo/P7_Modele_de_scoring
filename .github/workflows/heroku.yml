@@ -51,7 +51,7 @@ jobs:
 
       - name: Set Heroku config vars
         run: |
-          heroku config:set MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }} -a ${{ secrets.HEROKU_APP_NAME }}
+          heroku config:set MLFLOW_TRACKING_URI="sqlite:///mlflow.db" -a ${{ secrets.HEROKU_APP_NAME }}
           # Instead of setting a local SQLite URI, use a cloud-based option if possible
 
       - name: Deploy to Heroku
