@@ -11,7 +11,7 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }} 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,10 +23,11 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11.11'
+          python-version: '3.11.11' 
 
       - name: Install dependencies
         run: |
@@ -35,26 +36,28 @@ jobs:
           pip install mlflow
           pip install gunicorn
           pip install pytest
-          # Install the Heroku CLI 
+          # Install the Heroku CLI
           curl https://cli-assets.heroku.com/install.sh | sh
+
       - name: Run pytest
         run: pytest Tests/
 
       - name: Login to Heroku
         run: |
           echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
-          
+
       - name: Set Heroku git remote
         run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
 
       - name: Set Heroku config vars
         run: |
           heroku config:set MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }} -a ${{ secrets.HEROKU_APP_NAME }}
-          # Setting SQLite URI for MLflow database
-          heroku config:set MLFLOW_TRACKING_URI="sqlite:///mlflow.db" -a ${{ secrets.HEROKU_APP_NAME }}
+          # Instead of setting a local SQLite URI, use a cloud-based option if possible
+
       - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
+        uses: akhileshns/heroku-deploy@v3.12.12 
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_buildpack: "heroku/python"
+          heroku_buildpack: "heroku/python" 
+          procfile: "Procfile"
