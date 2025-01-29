@@ -10,5 +10,3 @@ whitenoise # Ajouté pour servir des fichiers statiques efficacement sur Heroku
 paramiko
 seaborn
 pytest
-streamlit
-shap
