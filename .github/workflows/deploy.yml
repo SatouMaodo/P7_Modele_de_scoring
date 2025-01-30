@@ -33,4 +33,4 @@ jobs:
           create_new_app: true  
           app_name: "Interface de suivi MLflow"
           app_file: app.py
-          env_vars: MLFLOW_UI_URL="https://6c2e-34-85-241-192.ngrok-free.app"
+          env_vars: MLFLOW_UI_URL="https://d64d-104-197-221-124.ngrok-free.app"
