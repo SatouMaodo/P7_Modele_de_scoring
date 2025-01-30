@@ -19,7 +19,7 @@ jobs:
           pip install -r requirements.txt
           pip install streamlit
           pip install pyngrok
-          pip install mlflow
+          pip install pytest
 
       - name: Tests unitaires
         run: pytest Tests/
