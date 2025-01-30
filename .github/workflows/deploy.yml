@@ -9,7 +9,7 @@ on:
       - main  # Déployer lors des pull requests sur la branche principale
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.11.11' 
+          python-version: '3.11'  # Spécifiez la version Python que vous souhaitez
 
       # 3. Installer les dépendances
       - name: Install dependencies
@@ -29,9 +29,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Exécuter Streamlit en mode headless
-      - name: Run Streamlit
-        env:
-          STREAMLIT_SERVER_HEADLESS: "True"  # Activer le mode headless pour Streamlit
+      # 4. Exécuter les tests (si vous avez des tests)
+      - name: Run tests
         run: |
-          streamlit run app.py
+          pytest  # Remplacez cela par la commande appropriée si vous avez des tests à faire
+
+      # 5. Déployer sur Streamlit Cloud
+      - name: Deploy to Streamlit Cloud
+        run: |
+          echo "Streamlit Cloud prendra en charge le déploiement de l'application."
