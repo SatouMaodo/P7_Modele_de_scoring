@@ -1,36 +1,41 @@
-name: Deploy to Streamlit
+name: Deploy to Streamlit with ngrok
 
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2  # Add this step if it's missing
+      - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x' 
+          python-version: '3.x'
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
           pip install streamlit
-          
+          pip install pyngrok
+          pip install mlflow
+
       - name: Tests unitaires
         run: pytest Tests/
-
       - name: Start MLflow server
         run: |
           mlflow server --host 0.0.0.0 --port 5000 &
-      - name: Deploy to Streamlit
-        uses: streamlit/streamlit-github-actions@v1 # Make sure the name is correct
-        with:
-          token: ${{ secrets.STREAMLIT_TOKEN }}
-          branch: main
-          create_new_app: true  
-          app_name: "Interface de suivi MLflow"
-          app_file: app.py
-          env_vars: MLFLOW_UI_URL="https://d64d-104-197-221-124.ngrok-free.app"
+      - name: Expose with ngrok
+        run: |
+          export NGROK_AUTH_TOKEN=${{ secrets.NGROK_AUTH_TOKEN }}
+          pyngrok http 5000
+          export MLFLOW_UI_URL=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          echo "::set-output name=MLFLOW_UI_URL::$MLFLOW_UI_URL"
+      - name: Run Streamlit app
+        run: |
+          streamlit run app.py --server.port 8501 &
+          # Attendez que l'application Streamlit soit démarrée
+          sleep 10
+          # Affichez l'URL publique ngrok dans les logs
+          echo "Application Streamlit accessible sur : ${{ steps.expose-with-ngrok.outputs.MLFLOW_UI_URL }}"
