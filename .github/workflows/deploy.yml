@@ -23,9 +23,19 @@ jobs:
         run: pytest Tests/
       - name: Start MLflow server
         run: |
-          nohup mlflow server --host 127.0.0.1 --port 5000 & 
-      - name: Run Streamlit app
-        run: |
-          streamlit run app.py --server.port 8501 &
-          sleep 10 
-          echo "Application Streamlit accessible sur : $MLFLOW_UI_URL"
+          nohup mlflow server --host 0.0.0.0 --port 5000 & 
+      #- name: Run Streamlit app
+        #run: |
+          #streamlit run app.py --server.port 8501 &
+          #sleep 10 
+          #echo "Application Streamlit accessible sur : $MLFLOW_UI_URL"
+
+      - name: Deploy to Streamlit
+        uses: streamlit/streamlit-github-actions@v1 # Make sure the name is correct
+        with:
+          #token: ${{ secrets.STREAMLIT_TOKEN }}
+          branch: main
+          create_new_app: true  
+          app_name: "Interface de suivi MLflow"
+          app_file: app.py
+          env_vars: MLFLOW_UI_URL= "https://d64d-104-197-221-124.ngrok-free.app"
