@@ -32,6 +32,6 @@ jobs:
       # 4. Exécuter Streamlit en mode headless
       - name: Run Streamlit
         env:
-          STREAMLIT_SERVER_HEADLESS: "true"  # Activer le mode headless pour Streamlit
+          STREAMLIT_SERVER_HEADLESS: "False"  # Activer le mode headless pour Streamlit
         run: |
           streamlit run app.py
