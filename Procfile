@@ -1,1 +1,1 @@
-web: mlflow ui --host 0.0.0.0 --port $PORT
+web: mlflow ui --host 127.0.0.1 --port 5313
