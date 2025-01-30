@@ -9,11 +9,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.10' 
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
@@ -25,21 +25,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Tests unitaires
+      - name: Tests unitaires 
         run: pytest Tests/
       - name: Start MLflow server
         run: |
-          mlflow server --host 0.0.0.0 --port 5000 &
+          nohup mlflow server --host 0.0.0.0 --port 5000 & 
       - name: Expose with ngrok
+        id: expose-with-ngrok 
         run: |
           export NGROK_AUTH_TOKEN=${{ secrets.NGROK_AUTH_TOKEN }}
-          pyngrok http 5000
-          export MLFLOW_UI_URL=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-          echo "::set-output name=MLFLOW_UI_URL::$MLFLOW_UI_URL"
+          pyngrok http 5000 &
+          sleep 5 
+          MLFLOW_UI_URL=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          echo "MLFLOW_UI_URL=$MLFLOW_UI_URL" >> $GITHUB_ENV
       - name: Run Streamlit app
         run: |
           streamlit run app.py --server.port 8501 &
-          # Attendez que l'application Streamlit soit démarrée
-          sleep 10
-          # Affichez l'URL publique ngrok dans les logs
-          echo "Application Streamlit accessible sur : ${{ steps.expose-with-ngrok.outputs.MLFLOW_UI_URL }}"
+          sleep 10 
+          echo "Application Streamlit accessible sur : $MLFLOW_UI_URL"
