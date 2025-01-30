@@ -11,7 +11,7 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      MLFLOW_TRACKING_URI: ${{ secrets.YOUR_NGROK_URL }} # Replace with your ngrok URL secret
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI}} # Replace with your ngrok URL secret
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -54,4 +54,4 @@ jobs:
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          #heroku_buildpack: "heroku/python"
+          heroku_buildpack: "heroku/python"
