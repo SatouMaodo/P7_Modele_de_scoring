@@ -17,9 +17,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --verbose --no-cache-dir -r requirements.txt
-          pip install --verbose --no-cache-dir streamlit
-          pip install --verbose --no-cache-dir pyngrok
-          pip install --verbose --no-cache-dir pytest
 
       - name: Tests unitaires
         run: pytest Tests/
