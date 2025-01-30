@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2  # Add this step if it's missing
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -18,16 +18,19 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install streamlit
-          pip install mlflow
+          
+      - name: Tests unitaires
+        run: pytest Tests/
+
       - name: Start MLflow server
         run: |
           mlflow server --host 0.0.0.0 --port 5000 &
       - name: Deploy to Streamlit
-        uses: streamlit/streamlit-github-actions@v1
+        uses: streamlit/streamlit-github-actions@v1 # Make sure the name is correct
         with:
           token: ${{ secrets.STREAMLIT_TOKEN }}
           branch: main
           create_new_app: true  
           app_name: "Interface de suivi MLflow"
           app_file: app.py
-          env_vars: MLFLOW_UI_URL="https://6c2e-34-85-241-192.ngrok-free.app" 
+          env_vars: MLFLOW_UI_URL="https://6c2e-34-85-241-192.ngrok-free.app"
