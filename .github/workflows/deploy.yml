@@ -24,14 +24,6 @@ jobs:
       - name: Start MLflow server
         run: |
           nohup mlflow server --host 127.0.0.1 --port 5000 & 
-      - name: Expose with ngrok
-        id: expose-with-ngrok 
-        run: |
-          export NGROK_AUTH_TOKEN=${{ secrets.NGROK_AUTH_TOKEN }}
-          pyngrok http 5000 &
-          sleep 5 
-          MLFLOW_UI_URL=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-          echo "MLFLOW_UI_URL=$MLFLOW_UI_URL" >> $GITHUB_ENV
       - name: Run Streamlit app
         run: |
           streamlit run app.py --server.port 8501 &
