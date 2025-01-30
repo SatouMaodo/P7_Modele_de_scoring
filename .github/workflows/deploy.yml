@@ -16,10 +16,10 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install streamlit
-          pip install pyngrok
-          pip install pytest
+          pip install --verbose --no-cache-dir -r requirements.txt
+          pip install --verbose --no-cache-dir streamlit
+          pip install --verbose --no-cache-dir pyngrok
+          pip install --verbose --no-cache-dir pytest
 
       - name: Tests unitaires
         run: pytest Tests/
