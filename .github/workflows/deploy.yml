@@ -1,27 +1,33 @@
-name: Deploy to Railway
+name: Deploy to Streamlit
 
 on:
   push:
     branches:
-      - main  # Ou la branche que vous souhaitez déployer
+      - main 
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Railway CLI
-        run: curl -fsSL https://railway.app/install.sh | sh
-
-      - name: Login to Railway
-        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
-
-      - name: Deploy to Railway
-        run: railway up --detach
-        env:
-          RAILWAY_PROJECT: ${{ secrets.RAILWAY_PROJECT }}
-          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }} 
-          # Autres variables d'environnement nécessaires à votre application, 
-          # comme MLFLOW_TRACKING_URI, etc.
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x' 
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install streamlit
+          pip install mlflow
+      - name: Start MLflow server
+        run: |
+          mlflow server --host 0.0.0.0 --port 5000 &
+      - name: Deploy to Streamlit
+        uses: streamlit/streamlit-github-actions@v1
+        with:
+          token: ${{ secrets.STREAMLIT_TOKEN }}
+          branch: main
+          create_new_app: true  
+          app_name: "Interface de suivi MLflow"
+          app_file: app.py
+          env_vars: MLFLOW_UI_URL="https://6c2e-34-85-241-192.ngrok-free.app" 
