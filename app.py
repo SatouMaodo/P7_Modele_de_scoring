@@ -4,5 +4,5 @@ import streamlit as st
 mlflow_ui_url = "https://6c2e-34-85-241-192.ngrok-free.app"
 
 # Affichez l'interface utilisateur MLflow dans un iframe Streamlit
-st.title("Interface utilisateur MLflow")
+st.title("Comparaison des modèles:Projet 7-Implémenter un modèle de scoring")
 st.components.v1.iframe(mlflow_ui_url, width=1000, height=800)
