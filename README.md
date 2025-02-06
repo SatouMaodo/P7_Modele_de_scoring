@@ -2,7 +2,7 @@
 
 ## Description
 
-Ce projet vise à construire un modèle de machine learning capable de prédire la probabilité de défaut de crédit d'un client. Il s'inscrit dans le cadre d'une compétition sur la plateforme Home Credit.
+Ce projet vise à construire un modèle de machine learning capable de prédire la probabilité de défaut de crédit d'un client. Il s'inscrit dans le cadre de la formation de Data scientist avec Openclassrooms.
 
 ## Objectif
 
@@ -29,8 +29,8 @@ Le modèle développé dans le cadre de ce projet a obtenu des performances sati
 
 ## Conclusion
 
-Ce projet a permis de développer un modèle de scoring client performant pour Home Credit. Il a mis en évidence l'importance de l'exploration des données, de l'ingénierie des caractéristiques et de la sélection du modèle pour obtenir des résultats optimaux. Le modèle peut être utilisé par Home Credit pour améliorer ses décisions d'octroi de crédit et réduire les risques de défaut.
+Ce projet a permis de développer un modèle de scoring client performant pour Home Credit. Il a mis en évidence l'importance de l'exploration des données, de l'ingénierie des caractéristiques et de la sélection du modèle pour obtenir des résultats optimaux. Le modèle peut être utilisé l'organisme financier pour améliorer ses décisions d'octroi de crédit et réduire les risques de défaut.
 
 ## Contributeur
 
-* Amsatou NDIAYE
+* Amsatou NDIAYE- étudiante chez Openclassrooms
