@@ -34,7 +34,9 @@ jobs:
         run: |
           pytest  # Remplacez cela par la commande appropriée si vous avez des tests à faire
 
-      # 5. Déployer sur Streamlit Cloud
-      - name: Deploy to Streamlit Cloud
-        run: |
-          echo "Streamlit Cloud prendra en charge le déploiement de l'application."
+      # 5. Déployer sur Render
+      - name: Deploy to Render
+        uses: render-oss/deploy-action@v1
+        with:
+          serviceId: ${{ secrets.RENDER_SERVICE_ID }}  # ID du service Render
+          apiKey: ${{ secrets.RENDER_API_KEY }}  # Clé API Render
