@@ -1,17 +1,11 @@
-# Utilisez une image de base Python
-FROM python:3.9-slim
+FROM python:3.11.11-slim-buster
 
-# Créez un répertoire de travail
 WORKDIR /app
 
-# Copiez le code de votre application dans l'image Docker
-COPY . /app
-
-# Installez les dépendances
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Exposez le port sur lequel l'API fonctionnera
-EXPOSE 8000
+COPY . .
 
-# Commande pour démarrer l'API avec uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Changed command to use main.py
+CMD ["gunicorn", "main:app", "--bind", "0.0.0.0:$PORT"]
