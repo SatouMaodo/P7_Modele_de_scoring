@@ -23,20 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build Docker image
-        run: docker build -t my-ml-api .
-
-      - name: Log in to Render
-        run: |
-          echo ${{ secrets.RENDER_API_KEY }} | docker login --username render --password-stdin
-
-      - name: Push Docker image to Render
-        run: |
-          docker tag my-ml-api registry.render.com/Satou DIOP/my-fastapi-app:latest
-          docker push registry.render.com/Satou DIOP/my-fastapi-app:latest
-
       - name: Trigger Deploy Hook
         run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }} \
-          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -d '{}'
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
