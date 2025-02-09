@@ -1,44 +1,32 @@
-name: Render Deployment
+name: Deploy FastAPI to Render
 
 on:
   push:
     branches:
-      - main
+      - main  # Déploiement automatique quand on push sur main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Checkout render-oss/deploy-action
-        uses: actions/checkout@v3
-        with:
-          repository: render-oss/deploy-action
-          path: render-oss/deploy-action
-
-      # 2. Installer Python
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.11.11'  # Spécifiez la version Python que vous souhaitez
+          python-version: "3.10"
 
-      # 3. Installer les dépendances
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r  app/requirements.txt
+        run: pip install -r requirements.txt
 
-      # 4. Exécuter les tests (si vous avez des tests)
-      - name: Run tests
+      - name: Deploy to Render via API
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  # Clé API Render
+          #SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}  # ID du service Render
         run: |
-          pytest  # Remplacez cela par la commande appropriée si vous avez des tests à faire
-
-      # 5. Déployer sur Render
-      - name: Build and deploy to Render
-        uses: ./render-oss/deploy-action/v1 # Use the local path
-        with:
-          #serviceId: YOUR_SERVICE_ID
-          #instanceId: YOUR_INSTANCE_ID
-          apiKey: ${{ secrets.RENDER_API_KEY }}
+          curl -X POST "https://api.render.com/v1/services/$SERVICE_ID/deploys" \
+          -H "Accept: application/json" \
+          -H "Authorization: Bearer $RENDER_API_KEY" \
+          -H "Content-Type: application/json" \
+          --data '{}'
