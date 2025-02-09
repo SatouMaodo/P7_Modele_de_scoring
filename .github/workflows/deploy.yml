@@ -1,32 +1,42 @@
-name: Deploy FastAPI to Render
+name: Deploy to Render via Deploy Hook
 
 on:
   push:
     branches:
-      - main  # Déploiement automatique quand on push sur main
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
-          python-version: "3.10"
+          python-version: '3.9'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Deploy to Render via API
-        env:
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  # Clé API Render
-          # SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}  # ID du service Render
         run: |
-          curl -X POST "https://api.render.com/v1/services/$SERVICE_ID/deploys" \
-          -H "Accept: application/json" \
-          -H "Authorization: Bearer $RENDER_API_KEY" \
-          -H "Content-Type: application/json" \
-          --data '{}'
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build Docker image
+        run: docker build -t my-ml-api .
+
+      - name: Log in to Render
+        run: |
+          echo ${{ secrets.RENDER_API_KEY }} | docker login --username render --password-stdin
+
+      - name: Push Docker image to Render
+        run: |
+          docker tag my-ml-api registry.render.com/Satou DIOP/my-fastapi-app:latest
+          docker push registry.render.com/Satou DIOP/my-fastapi-app:latest
+
+      - name: Trigger Deploy Hook
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }} \
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -d '{}'
