@@ -6,7 +6,7 @@ import mlflow
     app = FastAPI()
     
     # Charger le modèle MLflow
-    model_uri = "best_model.joblib"  # Le chemin vers le modèle enregistré
+    model_uri = "app/best_model.joblib"  # Le chemin vers le modèle enregistré
     loaded_model = mlflow.pyfunc.load_model(model_uri)
     
     @app.get("/")
