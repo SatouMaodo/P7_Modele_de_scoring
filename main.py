@@ -1,23 +1,37 @@
-import mlflow
-import pandas as pd
 from fastapi import FastAPI
-
+import joblib
+import pandas as pd
+import numpy as np
+import shap
 app = FastAPI()
 
-# Charger le modèle MLflow
-model_uri = "file:///mlruns/model"
-loaded_model = mlflow.pyfunc.load_model(model_uri)
+# Charger le modèle
+model = joblib.load('best_model.joblib')
 
-@app.get("/")
-async def root():
-    return {"message": "Bienvenue sur l'API de Scoring"}
-
+test_df= pd.read_csv('test_df.csv')
+test_df = test_df.drop(columns=['TARGET'])
 @app.post("/predict")
-async def predict(input_data: dict):
-    # Convertir les données d'entrée en DataFrame Pandas
-    input_df = pd.DataFrame([input_data])
+async def predict(data: dict):
+    num_client=data['client_id']
+    input_df=test_df[test_df['SK_ID_CURR']==num_client]
 
-    # Faire une prédiction
-    prediction = loaded_model.predict(input_df)
+    print(input_df)
+    #input_df = input_df.replace([np.inf, -np.inf], np.nan)
+    #for col in input_df.select_dtypes(include=np.number).columns:
+    #    input_df[col] = input_df[col].fillna(input_df[col].median())
 
-    return {"prediction": prediction.tolist()[0]}
+    prediction = model.predict_proba(input_df)[0, 1]
+
+    return {"prediction": round(prediction,3)}
+
+@app.post("/interpretabilite_locale")
+async def shap_local(data:dict):
+    # Feature importance locale avec shap.plots.waterfall
+    num_client = data['client_id']
+    input_df = test_df[test_df['SK_ID_CURR'] == num_client]
+    feature_names = test_df.columns
+    explainer = shap.TreeExplainer(model)
+    # Get SHAP values as an Explanation object
+    shap_values_explanation = explainer(input_df)
+    print(shap_values_explanation[0])
+    return {"shap_values": shap_values_explanation.values.tolist(),"base_values":shap_values_explanation.base_values.tolist()}
