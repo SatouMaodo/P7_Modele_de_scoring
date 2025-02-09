@@ -1,4 +1,4 @@
-name: Deploy to Render via Deploy Hook
+name: Deploy to Heroku
 
 on:
   push:
@@ -8,21 +8,47 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+ 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Cache dependencies
+        uses: actions/cache@v3
         with:
-          python-version: '3.11'
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.11'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install mlflow
+          pip install gunicorn
+          pip install pytest
+          # Install the Heroku CLI 
+          curl https://cli-assets.heroku.com/install.sh | sh
+      - name: Run pytest
+        run: pytest Tests/
 
-      - name: Trigger Deploy Hook
+      - name: Login to Heroku
         run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
+          
+      - name: Set Heroku git remote
+        run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
+
+      # Add these steps for deployment
+      - name: Build and push Docker image to Heroku
+        run: |
+          heroku container:push web -a ${{ secrets.HEROKU_APP_NAME }}
+          heroku container:release web -a ${{ secrets.HEROKU_APP_NAME }}
