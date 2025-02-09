@@ -37,9 +37,6 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      # - name: Run tests (optional)
-      #   run: pytest Tests/
-      #   continue-on-error: true # Pour éviter de bloquer le déploiement
 
       - name: Login to Heroku Container Registry
         run: heroku container:login
