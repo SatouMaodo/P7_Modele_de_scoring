@@ -5,7 +5,7 @@ from fastapi import FastAPI
 app = FastAPI()
 
 # Charger le modèle MLflow
-model_uri = "sqlite:///mlflow.db"
+model_uri = "file:///mlruns/model"
 loaded_model = mlflow.pyfunc.load_model(model_uri)
 
 @app.get("/")
