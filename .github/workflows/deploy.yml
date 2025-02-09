@@ -43,6 +43,8 @@ jobs:
 
       - name: Login to Heroku Container Registry
         run: heroku container:login
+      - name: Set Heroku stack to container
+        run: heroku stack:set container -a ${{ secrets.HEROKU_APP_NAME }}
 
       - name: Build and push Docker image to Heroku
         run: heroku container:push web -a ${{ secrets.HEROKU_APP_NAME }}
