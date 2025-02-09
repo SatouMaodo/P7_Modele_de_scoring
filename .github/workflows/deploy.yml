@@ -11,7 +11,7 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
- 
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,6 +23,7 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -35,20 +36,18 @@ jobs:
           pip install mlflow
           pip install gunicorn
           pip install pytest
-          # Install the Heroku CLI 
+          # Install the Heroku CLI
           curl https://cli-assets.heroku.com/install.sh | sh
-      # name: Run pytest
-       # run: pytest Tests/
 
-      - name: Login to Heroku
-        run: |
-          echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
-          
-      - name: Set Heroku git remote
-        run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
+      # Run pytest (Commented out for now)
+      # - name: Run pytest
+      #   run: pytest Tests/
 
-      # Add these steps for deployment
+      - name: Login to Heroku Container Registry
+        run: heroku container:login
+
       - name: Build and push Docker image to Heroku
-        run: |
-          heroku container:push web -a ${{ secrets.HEROKU_APP_NAME }}
-          heroku container:release web -a ${{ secrets.HEROKU_APP_NAME }}
+        run: heroku container:push web -a ${{ secrets.HEROKU_APP_NAME }}
+
+      - name: Release Docker image
+        run: heroku container:release web -a ${{ secrets.HEROKU_APP_NAME }}
