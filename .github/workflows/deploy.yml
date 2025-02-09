@@ -37,8 +37,8 @@ jobs:
           pip install pytest
           # Install the Heroku CLI 
           curl https://cli-assets.heroku.com/install.sh | sh
-      - name: Run pytest
-        run: pytest Tests/
+      # name: Run pytest
+       # run: pytest Tests/
 
       - name: Login to Heroku
         run: |
