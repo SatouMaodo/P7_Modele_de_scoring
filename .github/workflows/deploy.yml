@@ -11,7 +11,7 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      HEROKU_EMAIL: "votre_adresse_email_heroku" # Remplacez par votre email Heroku
+      HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }} # Utiliser un secret pour l'email
 
     steps:
       - name: Extraire le code
@@ -22,25 +22,21 @@ jobs:
       - name: Installer les dépendances
         run: pip install -r requirements.txt
 
-      - name: Configurer Heroku CLI  
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
       - name: Installer Heroku CLI
-        run: npm install -g heroku
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku --version
 
       - name: Authentification Heroku
         run: echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
 
       - name: Configurer les informations d'identification Git pour Heroku
         run: |
-          git config --global user.email "${{ env.HEROKU_EMAIL }}"
+          git config --global user.email "${{ secrets.HEROKU_EMAIL }}"
           git config --global user.name "SatouMaodo" 
 
-
       - name: Ajouter remote Heroku
-        run: git remote add heroku https://git.heroku.com/${{ env.HEROKU_APP_NAME }}.git
+        run: git remote add heroku https://git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
 
       - name: Synchroniser avec Heroku
         run: git pull heroku main --rebase 
@@ -49,5 +45,5 @@ jobs:
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ env.HEROKU_APP_NAME }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
           procfile: "web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app"
