@@ -38,6 +38,12 @@ jobs:
       - name: Ajouter remote Heroku avec authentification
         run: git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
 
+      - name: Ajouter Procfile si absent
+        run: |
+          echo "web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app" > Procfile
+          git add Procfile
+          git commit -m "Ajout du Procfile" || echo "Aucune modification à valider"
+
       - name: Synchroniser avec Heroku
         run: git pull heroku main --rebase 
 
