@@ -1,53 +1,59 @@
-import os
+from fastapi import FastAPI, HTTPException
 import joblib
 import pandas as pd
 import numpy as np
 import shap
-from fastapi import FastAPI
-import uvicorn
+import os
 
 app = FastAPI()
 
-# Charger le modèle (assurez-vous que le modèle est copié dans l'image Docker lors de la construction)
+# Charger le modèle au démarrage de l'application
 model = joblib.load('best_model.joblib')
 
-# Charger le fichier CSV de données une seule fois au démarrage
-# Cela permet d'éviter de charger à chaque requête
+# Charger les données de test au démarrage pour éviter les chargements répétés
 test_df = pd.read_csv('test_df.csv')
+
+# Supprimer la colonne 'TARGET' (elle ne doit pas être utilisée dans les prédictions)
 test_df = test_df.drop(columns=['TARGET'])
+
+# Gérer les valeurs manquantes dans le DataFrame
+test_df = test_df.replace([np.inf, -np.inf], np.nan)
+for col in test_df.select_dtypes(include=np.number).columns:
+    test_df[col] = test_df[col].fillna(test_df[col].median())
 
 @app.post("/predict")
 async def predict(data: dict):
     num_client = data['client_id']
     
-    # Charger uniquement les données nécessaires pour un client spécifique
+    # Vérifier si le client existe dans le dataset
     input_df = test_df[test_df['SK_ID_CURR'] == num_client]
-
-    # Effectuer la prédiction avec le modèle
+    
+    if input_df.empty:
+        raise HTTPException(status_code=404, detail="Client non trouvé dans les données")
+    
+    # Prédiction avec le modèle
     prediction = model.predict_proba(input_df)[0, 1]
 
     return {"prediction": round(prediction, 3)}
 
 @app.post("/interpretabilite_locale")
 async def shap_local(data: dict):
-    # Obtenir l'importance locale des caractéristiques via SHAP
     num_client = data['client_id']
     
+    # Vérifier si le client existe dans le dataset
     input_df = test_df[test_df['SK_ID_CURR'] == num_client]
     
-    # Créer un explicateur SHAP pour l'arbre de décision
+    if input_df.empty:
+        raise HTTPException(status_code=404, detail="Client non trouvé dans les données")
+    
+    # Explainer SHAP
+    feature_names = test_df.columns
     explainer = shap.TreeExplainer(model)
+    shap_values_explanation = explainer.shap_values(input_df)
     
-    # Obtenir les valeurs SHAP pour les caractéristiques
-    shap_values_explanation = explainer(input_df)
-    
-    # Retourner les valeurs SHAP
+    # Retourner les valeurs SHAP sous forme de liste
     return {
-        "shap_values": shap_values_explanation.values.tolist(),
-        "base_values": shap_values_explanation.base_values.tolist()
+        "shap_values": shap_values_explanation[0].tolist(),
+        "base_values": shap_values_explanation.base_values[0].tolist()
     }
 
-# Si ce fichier est exécuté directement, démarrer l'application FastAPI sur le port Heroku
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))  # Utiliser le port dynamique de Heroku
-    uvicorn.run(app, host="0.0.0.0", port=port)
