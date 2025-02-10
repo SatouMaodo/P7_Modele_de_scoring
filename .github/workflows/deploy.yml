@@ -41,7 +41,19 @@ jobs:
       - name: Set Heroku git remote
         run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }}
 
-      - name: Push code to Heroku
-        run: |
-          heroku git:remote -a $HEROKU_APP_NAME
-          git push --force https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git HEAD:main
+      - name: Update Heroku CLI # Solution 2: Mise à jour de Heroku CLI
+        run: heroku update
+
+      - name: Add Heroku SSH buildpack # Solution 3 (modifiée) : Utiliser l'action GitHub pour ajouter le buildpack SSH
+        uses: heroku/cli@main # Utilisation de la branche principale
+        with:
+          command: buildpacks:add
+          arguments: heroku/heroku-ssh -a ${{ env.HEROKU_APP_NAME }}
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12 # Utilisation de l'action de déploiement Heroku avec PAT
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Ajouter l'adresse e-mail Heroku
+
