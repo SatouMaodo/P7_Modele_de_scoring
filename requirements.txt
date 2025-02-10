@@ -6,3 +6,4 @@ pytest==8.3.4
 fastapi==0.95.0
 uvicorn[standard]==0.23.0
 shap==0.42.1
+httpx==0.24.0
