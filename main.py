@@ -12,17 +12,14 @@ test_df= pd.read_csv('test_df.csv')
 test_df = test_df.drop(columns=['TARGET'])
 @app.post("/predict")
 async def predict(data: dict):
-    num_client=data['client_id']
-    input_df=test_df[test_df['SK_ID_CURR']==num_client]
-
-    print(input_df)
-    #input_df = input_df.replace([np.inf, -np.inf], np.nan)
-    #for col in input_df.select_dtypes(include=np.number).columns:
-    #    input_df[col] = input_df[col].fillna(input_df[col].median())
+    num_client = data['client_id']
+    test_df = pd.read_csv('test_df.csv')  # Charger à chaque fois la donnée nécessaire
+    test_df = test_df.drop(columns=['TARGET'])
+    input_df = test_df[test_df['SK_ID_CURR'] == num_client]
 
     prediction = model.predict_proba(input_df)[0, 1]
 
-    return {"prediction": round(prediction,3)}
+    return {"prediction": round(prediction, 3)}
 
 @app.post("/interpretabilite_locale")
 async def shap_local(data:dict):
