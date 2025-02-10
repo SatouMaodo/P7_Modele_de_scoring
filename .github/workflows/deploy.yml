@@ -33,9 +33,8 @@ jobs:
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
           heroku --version
-
       - name: Authentification Heroku
-        run: heroku login -i -a ${{ secrets.HEROKU_APP_NAME }}
+        run: echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
 
       - name: Configurer les informations d'identification Git pour Heroku
         run: |
