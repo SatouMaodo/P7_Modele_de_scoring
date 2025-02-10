@@ -13,7 +13,7 @@ jobs:
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
 
     steps:
-      # Vérifier le code
+      # Vérifier le code source
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -42,23 +42,7 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      # Se connecter au registre de conteneurs Heroku
-      - name: Login to Heroku Container Registry
-        run: heroku container:login
-
-      # Définir Heroku comme un environnement de conteneur
-      - name: Set Heroku stack to container
-        run: heroku stack:set container -a ${{ secrets.HEROKU_APP_NAME }}
-
-      # Construire et pousser l'image Docker sur Heroku
-      - name: Build and push Docker image to Heroku
+      # Déploiement sur Heroku via Git
+      - name: Deploy to Heroku
         run: |
-          heroku container:push web -a ${{ secrets.HEROKU_APP_NAME }}
-
-      # Libérer l'image Docker
-      - name: Release Docker image
-        run: heroku container:release web -a ${{ secrets.HEROKU_APP_NAME }}
-
-      # Se déconnecter d'Heroku
-      - name: Logout from Heroku
-        run: heroku logout
+          git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD:main
