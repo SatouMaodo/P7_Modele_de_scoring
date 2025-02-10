@@ -1,9 +1,13 @@
+import signal
+import sys
+import os
 from fastapi import FastAPI, HTTPException
 import joblib
 import pandas as pd
 import numpy as np
 import shap
-import os
+
+
 
 app = FastAPI()
 
@@ -19,7 +23,13 @@ test_df = test_df.drop(columns=['TARGET'])
 # Gérer les valeurs manquantes dans le DataFrame
 test_df = test_df.replace([np.inf, -np.inf], np.nan)
 for col in test_df.select_dtypes(include=np.number).columns:
-    test_df[col] = test_df[col].fillna(input_df[col].median())
+    test_df[col] = test_df[col].fillna(test_df[col].median())  # Correction ici
+
+# Gestion du signal SIGTERM
+def sigterm_handler(_signo, _stack_frame):
+    sys.exit(0)
+
+signal.signal(signal.SIGTERM, sigterm_handler)
 
 @app.get("/")
 async def root():
@@ -58,10 +68,6 @@ async def shap_local(data: dict):
     # Retourner les valeurs SHAP sous forme de liste
     return {
         "shap_values": shap_values_explanation[0].tolist(),
-        "base_values": shap_values_explanation.base_values[0].tolist()
+        "base_values": explainer.expected_value.tolist(),  # Correction ici
+        "feature_names": feature_names.tolist()
     }
-
-# Important: Configurez l'application pour écouter sur le bon port Heroku
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
