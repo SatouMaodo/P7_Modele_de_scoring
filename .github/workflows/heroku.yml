@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Clone complet dès le départ, évite les problèmes de shallow clone
+          fetch-depth: 0
 
       # Mise en cache des dépendances Python
       - name: Cache dependencies
@@ -44,7 +44,8 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      # Déploiement sur Heroku via Git
+      # Déployer l'application sur Heroku via Git (Buildpacks)
       - name: Deploy to Heroku
         run: |
+          heroku git:remote -a $HEROKU_APP_NAME
           git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD:main
