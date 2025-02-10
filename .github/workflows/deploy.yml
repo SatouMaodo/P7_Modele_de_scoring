@@ -1,4 +1,4 @@
-name: Déployer sur Heroku (Docker)
+name: Déployer sur Heroku (sans Docker)
 
 on:
   push:
@@ -18,18 +18,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Installer Heroku CLI
-        run: |
-          curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
 
-      - name: Se connecter au registre de conteneurs Heroku
-        run: heroku container:login
-
-      - name: Construire et pousser l'image Docker
-        run: heroku container:push web -a $HEROKU_APP_NAME
-
-      - name: Publier l'image Docker
-        run: heroku container:release web -a $HEROKU_APP_NAME
+      - name: Déployer sur Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Optionnel, mais recommandé
+          procfile: "web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app" 
 
       - name: Vérifier les journaux Heroku (débogage)
         run: heroku logs --tail -a $HEROKU_APP_NAME
