@@ -19,7 +19,11 @@ test_df = test_df.drop(columns=['TARGET'])
 # Gérer les valeurs manquantes dans le DataFrame
 test_df = test_df.replace([np.inf, -np.inf], np.nan)
 for col in test_df.select_dtypes(include=np.number).columns:
-    test_df[col] = test_df[col].fillna(test_df[col].median())
+    test_df[col] = test_df[col].fillna(input_df[col].median())
+
+@app.get("/")
+async def root():
+    return {"message": "Bienvenue sur l'API FastAPI ! Utilisez /docs pour voir la documentation."}
 
 @app.post("/predict")
 async def predict(data: dict):
