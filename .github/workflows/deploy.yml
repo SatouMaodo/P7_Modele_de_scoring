@@ -1,43 +1,31 @@
-name: Deploy to Heroku (Docker)
+name: Déployer sur Heroku (Docker)
 
 on:
   push:
     branches:
-      - main  # Déclenche le déploiement uniquement sur un push vers la branche 'main'
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}  # Clé API pour se connecter à Heroku
-      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}  # Nom de l'application Heroku
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
 
     steps:
-      # Étape 1 : Récupérer le code source du dépôt GitHub
-      - name: Checkout code
+      - name: Extraire le code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Récupère l'historique complet, pas seulement le dernier commit
+          fetch-depth: 0
 
-      # Étape 2 : Installer Heroku CLI
-      - name: Install Heroku CLI
-        run: curl https://cli-assets.heroku.com/install.sh | sudo sh  # Installe Heroku CLI
+      - name: Se connecter au registre de conteneurs Heroku
+        run: heroku container:login
 
-      # Étape 3 : Se connecter à Heroku avec la clé API
-      - name: Login to Heroku
-        run: echo $HEROKU_API_KEY | heroku auth:token  # Utilisation de la clé API pour s'authentifier
+      - name: Construire et pousser l'image Docker
+        run: heroku container:push web -a $HEROKU_APP_NAME
 
-      # Étape 4 : Configurer l'application pour utiliser le stack Docker
-      - name: Set Heroku stack to container
-        run: heroku stack:set container -a $HEROKU_APP_NAME  # Configure le stack pour accepter Docker
+      - name: Publier l'image Docker
+        run: heroku container:release web -a $HEROKU_APP_NAME
 
-      # Étape 5 : Pousser l'image Docker et déployer l'application
-      - name: Deploy to Heroku using Docker
-        run: |
-          heroku container:login  # Se connecter à Heroku pour déployer avec Docker
-          heroku container:push web -a $HEROKU_APP_NAME  # Pousser l'image Docker
-          heroku container:release web -a $HEROKU_APP_NAME  # Libérer l'image Docker pour démarrer l'application
-
-      # Étape 6 : Vérifier les logs de l'application sur Heroku (débogage)
-      - name: Check Heroku logs (debug)
-        run: heroku logs --num 50 -a $HEROKU_APP_NAME  # Afficher les 50 dernières lignes des logs Heroku pour vérifier l'état de l'application
+      - name: Vérifier les journaux Heroku (débogage)
+        run: heroku logs --tail -a $HEROKU_APP_NAME
