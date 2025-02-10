@@ -21,11 +21,13 @@ jobs:
       - name: Installer les dépendances
         run: pip install -r requirements.txt
 
-      - name: Configurer Heroku CLI
-        uses: heroku/setup-heroku@v1
+      - name: Configurer Heroku CLI  
+        uses: actions/setup-node@v3
         with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Optionnel, mais recommandé
+          node-version: '16'
+
+      - name: Installer Heroku CLI
+        run: npm install -g heroku
 
       - name: Synchroniser avec Heroku
         run: |
