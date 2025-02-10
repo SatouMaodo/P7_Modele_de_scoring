@@ -15,11 +15,8 @@ app = FastAPI()
 model = joblib.load('best_model.joblib')
 
 # Charger les données de test au démarrage pour éviter les chargements répétés
-test_df1 = pd.read_csv('test_df.csv')
+test_df = pd.read_csv('test_df.csv')
 
-
-# Supprimer la colonne 'TARGET' (elle ne doit pas être utilisée dans les prédictions)
-test_df = test_df1.drop(columns=["TARGET"])
 
 # Gérer les valeurs manquantes dans le DataFrame
 test_df = test_df.replace([np.inf, -np.inf], np.nan)
