@@ -41,6 +41,9 @@ jobs:
           git config --global user.email "${{ secrets.HEROKU_EMAIL }}"
           git config --global user.name "SatouMaodo"  # Ou votre nom d'utilisateur GitHub
 
+      - name: Ajouter le dépôt distant Heroku  
+        run: git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
+
       - name: Déployer sur Heroku
         run: |
-          git push heroku HEAD:main  # Déployer la branche actuelle vers Heroku main
+          git push heroku HEAD:main  
