@@ -2,12 +2,15 @@ from fastapi.testclient import TestClient
 import sys
 import os
 
-# Obtenir le répertoire du fichier courant
-current_dir = os.path.dirname(os.path.abspath(__file__))
+import sys
+import os
 
-# Ajouter le répertoire parent au chemin de recherche des modules
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+# Obtenir le répertoire racine du projet
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+# Ajouter le répertoire racine au chemin de recherche
+sys.path.insert(0, project_root)
+
 from main import app
 test_client=TestClient(app)
 
