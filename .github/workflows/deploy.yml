@@ -1,50 +1,43 @@
-# Définir le nom du workflow pour déployer sur Heroku avec Docker
 name: Deploy to Heroku (Docker)
 
-# Déclencheur du workflow : il se lance lors d'un push sur la branche 'main'
 on:
   push:
     branches:
-      - main  # Déclenche le déploiement uniquement quand un push est effectué sur la branche 'main'
+      - main  # Déclenche le déploiement uniquement sur un push vers la branche 'main'
 
 jobs:
-  # Définir un job pour déployer l'application sur Heroku
   deploy:
-    # Spécifier l'environnement d'exécution pour ce job : ici, nous utilisons une machine virtuelle Ubuntu
     runs-on: ubuntu-latest
-    # Variables d'environnement utilisées pendant le job (secrets stockés dans GitHub)
     env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}  # Clé API de Heroku pour l'authentification
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}  # Clé API pour se connecter à Heroku
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}  # Nom de l'application Heroku
 
     steps:
-      # Étape 1 : Récupérer le code du dépôt GitHub
+      # Étape 1 : Récupérer le code source du dépôt GitHub
       - name: Checkout code
-        uses: actions/checkout@v3  # Action GitHub officielle pour récupérer le code source
+        uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Le fetch-depth à 0 assure que l'on récupère l'intégralité de l'historique git (utile pour certaines actions comme les tags)
+          fetch-depth: 0  # Récupère l'historique complet, pas seulement le dernier commit
 
-      # Étape 2 : Installer l'outil Heroku CLI
+      # Étape 2 : Installer Heroku CLI
       - name: Install Heroku CLI
-        run: curl https://cli-assets.heroku.com/install.sh | sudo sh  # Télécharge et installe Heroku CLI avec sudo pour les permissions nécessaires
+        run: curl https://cli-assets.heroku.com/install.sh | sudo sh  # Installe Heroku CLI
 
-      # Étape 3 : Se connecter à Heroku en utilisant la clé API
+      # Étape 3 : Se connecter à Heroku avec la clé API
       - name: Login to Heroku
-        run: echo $HEROKU_API_KEY | heroku auth:token  # Utilisation de la clé API pour l'authentification via la commande `heroku auth:token`
+        run: echo $HEROKU_API_KEY | heroku auth:token  # Utilisation de la clé API pour s'authentifier
 
-      # Étape 4 : Pousser l'image Docker et déployer l'application sur Heroku
+      # Étape 4 : Configurer l'application pour utiliser le stack Docker
+      - name: Set Heroku stack to container
+        run: heroku stack:set container -a $HEROKU_APP_NAME  # Configure le stack pour accepter Docker
+
+      # Étape 5 : Pousser l'image Docker et déployer l'application
       - name: Deploy to Heroku using Docker
         run: |
-          heroku container:login  # Se connecter à Heroku pour pouvoir pousser l'image Docker
-          heroku container:push web -a $HEROKU_APP_NAME  # Pousser l'image Docker pour l'application web sur Heroku
-          heroku container:release web -a $HEROKU_APP_NAME  # Libérer l'image sur Heroku pour démarrer l'application
+          heroku container:login  # Se connecter à Heroku pour déployer avec Docker
+          heroku container:push web -a $HEROKU_APP_NAME  # Pousser l'image Docker
+          heroku container:release web -a $HEROKU_APP_NAME  # Libérer l'image Docker pour démarrer l'application
 
-      # Étape 5 : Vérifier les logs de Heroku pour le déploiement
-     # - name: Check Heroku logs (debug)
-       # run: heroku logs --num 50 -a $HEROKU_APP_NAME  # Afficher les 100 dernières lignes de logs de Heroku pour aider au debug
-
-      # Étape 6 : Vérifier si l'application est bien déployée et accessible via HTTP
-      #- name: Verify Deployment
-      #  run: |
-       #   sleep 50  # Attendre 30 secondes pour laisser à l'application le temps de démarrer
-        #  curl -f https://$HEROKU_APP_NAME.herokuapp.com || exit 1  # Faire une requête HTTP à l'application pour vérifier qu'elle est bien déployée. Si la requête échoue, l'étape échoue
+      # Étape 6 : Vérifier les logs de l'application sur Heroku (débogage)
+      - name: Check Heroku logs (debug)
+        run: heroku logs --num 50 -a $HEROKU_APP_NAME  # Afficher les 50 dernières lignes des logs Heroku pour vérifier l'état de l'application
