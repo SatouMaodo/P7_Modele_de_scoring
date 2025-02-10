@@ -21,6 +21,10 @@ jobs:
       - name: Installer les dépendances
         run: pip install -r requirements.txt
 
+      - name: Installer Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+
       - name: Déployer sur Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
