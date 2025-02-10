@@ -23,11 +23,6 @@ test_df = test_df.replace([np.inf, -np.inf], np.nan)
 for col in test_df.select_dtypes(include=np.number).columns:
     test_df[col] = test_df[col].fillna(test_df[col].median())  # Correction ici
 
-# Gestion du signal SIGTERM
-def sigterm_handler(_signo, _stack_frame):
-    sys.exit(0)
-
-signal.signal(signal.SIGTERM, sigterm_handler)
 
 @app.get("/")
 async def root():
