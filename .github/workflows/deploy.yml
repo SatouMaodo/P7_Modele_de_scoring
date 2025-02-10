@@ -30,7 +30,7 @@ jobs:
         run: npm install -g heroku
 
       - name: Authentification Heroku
-        run: heroku login -i --key ${{ secrets.HEROKU_API_KEY }}
+        run: echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
 
       - name: Ajouter remote Heroku
         run: git remote add heroku https://git.heroku.com/${{ env.HEROKU_APP_NAME }}.git
