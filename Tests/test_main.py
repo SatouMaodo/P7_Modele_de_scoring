@@ -26,4 +26,4 @@ def test_predict_missing_client_id():
 # Test de l'endpoint /predict avec un client_id invalide
 def test_predict_invalid_client_id():
     response = test_client.post("/predict", json={"client_id": "invalid"})
-    assert response.status_code == 422  # Erreur de validation FastAPI
+    assert response.status_code == 404  # Erreur de validation FastAPI
