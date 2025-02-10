@@ -11,6 +11,7 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      HEROKU_EMAIL: "votre_adresse_email_heroku" # Remplacez par votre email Heroku
 
     steps:
       - name: Extraire le code
@@ -31,6 +32,12 @@ jobs:
 
       - name: Authentification Heroku
         run: echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
+
+      - name: Configurer les informations d'identification Git pour Heroku
+        run: |
+          git config --global user.email "${{ env.HEROKU_EMAIL }}"
+          git config --global user.name "SatouMaodo" 
+
 
       - name: Ajouter remote Heroku
         run: git remote add heroku https://git.heroku.com/${{ env.HEROKU_APP_NAME }}.git
