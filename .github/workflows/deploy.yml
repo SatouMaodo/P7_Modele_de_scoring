@@ -44,8 +44,12 @@ jobs:
       - name: Ajouter le dépôt distant Heroku  
         run: git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
 
-      - name: Déployer sur Heroku
+      - name: Exécuter les tests
+        run: pytest  # Exécutez vos tests avec pytest
+
+      - name: Déployer sur Heroku (seulement si les tests réussissent)
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+        if: ${{ success() }} # Condition pour exécuter le déploiement uniquement si les tests réussissent
