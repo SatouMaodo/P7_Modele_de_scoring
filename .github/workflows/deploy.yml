@@ -41,10 +41,10 @@ jobs:
 
       # Étape 5 : Vérifier les logs de Heroku pour le déploiement
       - name: Check Heroku logs (debug)
-        run: heroku logs --num 20 -a $HEROKU_APP_NAME  # Afficher les 100 dernières lignes de logs de Heroku pour aider au debug
+        run: heroku logs --num 50 -a $HEROKU_APP_NAME  # Afficher les 100 dernières lignes de logs de Heroku pour aider au debug
 
       # Étape 6 : Vérifier si l'application est bien déployée et accessible via HTTP
       - name: Verify Deployment
         run: |
-          sleep 10  # Attendre 10 secondes pour laisser à l'application le temps de démarrer
+          sleep 30  # Attendre 30 secondes pour laisser à l'application le temps de démarrer
           curl -f https://$HEROKU_APP_NAME.herokuapp.com || exit 1  # Faire une requête HTTP à l'application pour vérifier qu'elle est bien déployée. Si la requête échoue, l'étape échoue
