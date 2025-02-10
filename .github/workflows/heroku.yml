@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Évite le shallow clone dès le début
+          fetch-depth: 0  # Clone complet dès le départ, évite les problèmes de shallow clone
 
       # Mise en cache des dépendances Python
       - name: Cache dependencies
