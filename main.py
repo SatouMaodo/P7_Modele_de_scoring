@@ -57,3 +57,7 @@ async def shap_local(data: dict):
         "base_values": shap_values_explanation.base_values[0].tolist()
     }
 
+# Important: Configurez l'application pour écouter sur le bon port Heroku
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
