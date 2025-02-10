@@ -30,14 +30,18 @@ async def root():
 
 @app.post("/predict")
 async def predict(data: dict):
-    num_client = data['client_id']
-    
+    # Vérifier si client_id est fourni et est un entier
+    client_id = data.get("client_id")
+    if client_id is None:
+        raise HTTPException(status_code=400, detail="client_id est requis")
+    if not isinstance(client_id, int):
+        raise HTTPException(status_code=400, detail="client_id doit être un entier")
+
     # Vérifier si le client existe dans le dataset
-    input_df = test_df[test_df['SK_ID_CURR'] == num_client]
-    
+    input_df = test_df[test_df['SK_ID_CURR'] == client_id]
     if input_df.empty:
         raise HTTPException(status_code=404, detail="Client non trouvé dans les données")
-    
+
     # Prédiction avec le modèle
     prediction = model.predict_proba(input_df)[0, 1]
 
