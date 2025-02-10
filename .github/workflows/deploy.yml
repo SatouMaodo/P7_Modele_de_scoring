@@ -30,8 +30,4 @@ jobs:
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Optionnel, mais recommandé
           procfile: "web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app" 
-
-      - name: Vérifier les journaux Heroku (débogage)
-        run: heroku logs --tail -a $HEROKU_APP_NAME
