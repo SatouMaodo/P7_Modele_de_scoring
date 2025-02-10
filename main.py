@@ -15,7 +15,7 @@ app = FastAPI()
 model = joblib.load('best_model.joblib')
 
 # Charger les données de test au démarrage pour éviter les chargements répétés
-test_df = pd.read_csv('test_df.csv')
+test_df = pd.read_csv('test_df.csv', sep=';')
 
 
 # Gérer les valeurs manquantes dans le DataFrame
