@@ -16,6 +16,8 @@ jobs:
       # Vérifier le code source
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Évite le shallow clone dès le départ
 
       # Mise en cache des dépendances Python
       - name: Cache dependencies
@@ -41,6 +43,10 @@ jobs:
       # Installer l'outil Heroku CLI
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      # Débloquer le shallow clone de GitHub Actions
+      - name: Unshallow the repository
+        run: git fetch --prune --unshallow
 
       # Déploiement sur Heroku via Git
       - name: Deploy to Heroku
