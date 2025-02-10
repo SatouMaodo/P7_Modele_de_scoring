@@ -44,11 +44,11 @@ jobs:
           git add Procfile
           git commit -m "Ajout du Procfile" || echo "Aucune modification à valider"
 
-      - name: Synchroniser avec Heroku (résoudre conflit)
+      - name: Résoudre le conflit du Procfile (version locale)
         run: |
-          git pull heroku main --rebase || git checkout --ours Procfile
+          git checkout --ours Procfile
           git add Procfile
-          git rebase --continue
+          git rebase --continue || echo "Conflit résolu et rebase continué"
 
       - name: Déployer sur Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
