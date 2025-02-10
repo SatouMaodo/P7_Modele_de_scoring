@@ -1,9 +1,9 @@
-name: Deploy to Heroku
+name: Deploy to Heroku (Docker)
 
 on:
   push:
     branches:
-      - main  # Peut être changé en fonction de la branche de ton choix (par exemple, 'develop')
+      - main  # Déclenche le déploiement sur push vers main
 
 jobs:
   deploy:
@@ -16,44 +16,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Pour récupérer l'historique complet du dépôt
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          fetch-depth: 0  # Pour éviter les problèmes avec les push shallow
 
       - name: Install Heroku CLI
-        run: |
-          sudo snap install --classic heroku
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
       - name: Login to Heroku
+        run: heroku container:login
+
+      - name: Deploy to Heroku using Docker
         run: |
-          unset HEROKU_API_KEY
-          heroku login -i
-          export HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }}
-          
-      - name: Set Heroku git remote
-        run: heroku git:remote -a ${{ env.HEROKU_APP_NAME }}
+          heroku container:push web -a $HEROKU_APP_NAME
+          heroku container:release web -a $HEROKU_APP_NAME
 
-      - name: Update Heroku CLI # Solution 2: Mise à jour de Heroku CLI
-        run: heroku update
-
-      - name: Add Heroku SSH buildpack # Solution 3 (modifiée) : Utiliser l'action GitHub pour ajouter le buildpack SSH
-        uses: heroku/cli@main # Utilisation de la branche principale
-        with:
-          command: buildpacks:add
-          arguments: heroku/heroku-ssh -a ${{ env.HEROKU_APP_NAME }}
-
-      - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.12.12 # Utilisation de l'action de déploiement Heroku avec PAT
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }} # Ajouter l'adresse e-mail Heroku
-
+      - name: Check Heroku logs (debug)
+        run: heroku logs --tail -a $HEROKU_APP_NAME
